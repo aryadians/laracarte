@@ -1,7 +1,8 @@
-<div> <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+<div> 
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <div>
             <h1 class="text-3xl font-black text-slate-800 tracking-tight">Daftar Menu & Produk</h1>
-            <p class="text-slate-500 mt-1 text-lg">Kelola makanan dan minuman lezatmu di sini.</p>
+            <p class="text-slate-500 mt-1 text-lg">Kelola makanan, minuman, stok, dan ketersediaan di sini.</p>
         </div>
         
         <button wire:click="openModal" class="group relative px-6 py-3 font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5 transition-all duration-300">
@@ -43,9 +44,9 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         @foreach($products as $product)
-        <div class="group bg-white rounded-3xl shadow-lg shadow-slate-200/50 hover:shadow-2xl hover:shadow-indigo-500/20 transition-all duration-300 transform hover:-translate-y-2 relative border border-slate-100 overflow-hidden">
+        <div class="group bg-white rounded-3xl shadow-lg shadow-slate-200/50 hover:shadow-2xl hover:shadow-indigo-500/20 transition-all duration-300 transform hover:-translate-y-2 relative border border-slate-100 overflow-hidden flex flex-col {{ ($product->stock <= 0 || !$product->is_available) ? 'opacity-75' : '' }}">
             
-            <div class="h-56 w-full bg-slate-100 relative overflow-hidden group">
+            <div class="h-56 w-full bg-slate-100 relative overflow-hidden group shrink-0">
                 @if($product->image)
                     <img src="{{ asset('storage/' . $product->image) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="{{ $product->name }}">
                 @else
@@ -57,16 +58,26 @@
                     </div>
                 @endif
                 
-                <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-bold text-indigo-600 shadow-sm border border-indigo-50">
-                    {{ $product->category->name }}
-                </div>
-            </div>
+                <div class="absolute top-0 left-0 w-full p-4 flex justify-between items-start z-10 pointer-events-none">
+                    <span class="bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-bold text-indigo-600 shadow-sm border border-indigo-50">
+                        {{ $product->category->name }}
+                    </span>
 
-            <div class="p-6">
-                <h3 class="font-bold text-slate-800 text-lg mb-1 group-hover:text-indigo-600 transition-colors truncate">{{ $product->name }}</h3>
+                    <span class="px-3 py-1.5 rounded-full text-xs font-bold shadow-sm border 
+                        {{ $product->stock > 0 ? 'bg-green-100 text-green-700 border-green-200' : 'bg-red-100 text-red-700 border-red-200' }}">
+                        {{ $product->stock > 0 ? 'Stok: ' . $product->stock : 'Habis' }}
+                    </span>
+                </div>
+                </div>
+
+            <div class="p-6 flex flex-col flex-1">
+                <div class="flex justify-between items-start mb-1">
+                    <h3 class="font-bold text-slate-800 text-lg group-hover:text-indigo-600 transition-colors truncate flex-1">{{ $product->name }}</h3>
+                </div>
+                
                 <p class="text-slate-500 text-sm line-clamp-2 mb-5 h-10 leading-relaxed">{{ $product->description }}</p>
                 
-                <div class="flex justify-between items-center pt-4 border-t border-slate-50">
+                <div class="mt-auto flex justify-between items-center pt-4 border-t border-slate-50">
                     <span class="font-black text-xl text-slate-800">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
                     
                     <div class="flex space-x-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 transform md:translate-y-2 md:group-hover:translate-y-0">
@@ -97,7 +108,7 @@
                 </button>
             </div>
 
-            <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+            <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto custom-scrollbar">
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-1">Nama Menu</label>
                     <input type="text" wire:model="name" class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring focus:ring-indigo-200 transition-all text-slate-700">
@@ -119,6 +130,22 @@
                         <label class="block text-sm font-bold text-slate-700 mb-1">Harga</label>
                         <input type="number" wire:model="price" class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-slate-700">
                          @error('price') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1">Stok Harian</label>
+                        <input type="number" wire:model="stock" class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-slate-700" placeholder="0">
+                         @error('stock') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                    </div>
+                    
+                    <div class="flex items-center pt-6">
+                        <label class="inline-flex items-center cursor-pointer">
+                            <input type="checkbox" wire:model="is_available" class="sr-only peer">
+                            <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                            <span class="ms-3 text-sm font-bold text-slate-700">Menu Aktif?</span>
+                        </label>
                     </div>
                 </div>
 

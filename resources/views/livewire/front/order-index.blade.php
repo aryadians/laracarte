@@ -34,7 +34,11 @@
         @else
             <div class="grid grid-cols-1 gap-4">
                 @foreach($products as $product)
-                <div class="flex gap-4 bg-white p-3 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all">
+                @php
+                    $isSoldOut = $product->stock <= 0 || !$product->is_available;
+                @endphp
+
+                <div class="flex gap-4 bg-white p-3 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all {{ $isSoldOut ? 'opacity-60 grayscale' : '' }}">
                     <div class="w-24 h-24 flex-shrink-0 bg-slate-100 rounded-xl overflow-hidden relative">
                         @if($product->image)
                             <img src="{{ asset('storage/' . $product->image) }}" class="w-full h-full object-cover">
@@ -43,27 +47,48 @@
                                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             </div>
                         @endif
+                        
+                        @if($isSoldOut)
+                            <div class="absolute inset-0 bg-slate-900/50 flex items-center justify-center">
+                                <span class="text-white text-[0.65rem] font-black uppercase tracking-wider border border-white px-2 py-1 rounded">Habis</span>
+                            </div>
+                        @endif
                     </div>
 
                     <div class="flex-1 flex flex-col justify-between py-1">
                         <div>
                             <h3 class="font-bold text-slate-800 line-clamp-1 text-[0.95rem]">{{ $product->name }}</h3>
                             <p class="text-xs text-slate-500 line-clamp-2 mt-1 leading-relaxed">{{ $product->description }}</p>
+                            
+                            @if(!$isSoldOut && $product->stock <= 5)
+                                <p class="text-[0.6rem] text-red-500 font-bold mt-1 animate-pulse">🔥 Sisa {{ $product->stock }} porsi!</p>
+                            @endif
                         </div>
                         
                         <div class="flex justify-between items-end mt-2">
                             <span class="font-black text-slate-800 text-[0.95rem]">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
                             
-                            @if(isset($cart[$product->id]))
-                                <div class="flex items-center bg-slate-900 rounded-lg p-1 shadow-md">
-                                    <button wire:click="removeFromCart({{ $product->id }})" class="w-7 h-7 text-white flex items-center justify-center font-bold hover:bg-slate-700 rounded transition-colors">-</button>
-                                    <span class="w-8 text-center text-white text-xs font-bold">{{ $cart[$product->id] }}</span>
-                                    <button wire:click="addToCart({{ $product->id }})" class="w-7 h-7 text-white flex items-center justify-center font-bold hover:bg-slate-700 rounded transition-colors">+</button>
-                                </div>
-                            @else
-                                <button wire:click="addToCart({{ $product->id }})" class="bg-indigo-50 text-indigo-600 px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-indigo-600 hover:text-white transition-all shadow-sm border border-indigo-100">
-                                    + Pesan
+                            @if($isSoldOut)
+                                <button disabled class="bg-slate-100 text-slate-400 px-4 py-1.5 rounded-lg text-xs font-bold cursor-not-allowed border border-slate-200">
+                                    Habis
                                 </button>
+                            @else
+                                @if(isset($cart[$product->id]))
+                                    <div class="flex items-center bg-slate-900 rounded-lg p-1 shadow-md">
+                                        <button wire:click="removeFromCart({{ $product->id }})" class="w-7 h-7 text-white flex items-center justify-center font-bold hover:bg-slate-700 rounded transition-colors">-</button>
+                                        <span class="w-8 text-center text-white text-xs font-bold">{{ $cart[$product->id] }}</span>
+                                        
+                                        @if($cart[$product->id] < $product->stock)
+                                            <button wire:click="addToCart({{ $product->id }})" class="w-7 h-7 text-white flex items-center justify-center font-bold hover:bg-slate-700 rounded transition-colors">+</button>
+                                        @else
+                                            <button disabled class="w-7 h-7 text-slate-500 flex items-center justify-center font-bold cursor-not-allowed opacity-50">+</button>
+                                        @endif
+                                    </div>
+                                @else
+                                    <button wire:click="addToCart({{ $product->id }})" class="bg-indigo-50 text-indigo-600 px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-indigo-600 hover:text-white transition-all shadow-sm border border-indigo-100">
+                                        + Pesan
+                                    </button>
+                                @endif
                             @endif
                         </div>
                     </div>
@@ -93,17 +118,15 @@
     @if($isCheckoutOpen)
     <div class="fixed inset-0 z-[60] flex items-end justify-center">
         <div wire:click="closeCheckout" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
-
         <div class="bg-white w-full max-w-md rounded-t-[2rem] p-6 relative shadow-2xl transform transition-transform duration-300 animate-slide-up">
             <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
-
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl font-black text-slate-800">Konfirmasi Pesanan</h2>
                 <button wire:click="closeCheckout" class="p-2 bg-slate-100 rounded-full text-slate-500 hover:bg-slate-200">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-
+            
             <div class="max-h-60 overflow-y-auto space-y-3 mb-6 pr-2 -mr-2 custom-scrollbar">
                 @foreach($products->whereIn('id', array_keys($cart)) as $item)
                 <div class="flex justify-between items-center border-b border-slate-50 pb-3 last:border-0">
@@ -128,18 +151,15 @@
                     <span class="font-bold text-slate-500 text-sm">Total Pembayaran</span>
                     <span class="font-black text-indigo-600 text-2xl">Rp {{ number_format($this->getTotalPrice(), 0, ',', '.') }}</span>
                 </div>
-
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Nama Pemesan <span class="text-red-500">*</span></label>
                     <input wire:model="customerName" type="text" placeholder="Masukkan nama kamu..." class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-200 font-bold text-slate-700 py-3 bg-white shadow-sm">
                     @error('customerName') <span class="text-red-500 text-xs font-bold mt-1 block">{{ $message }}</span> @enderror
                 </div>
-
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Catatan (Opsional)</label>
                     <textarea wire:model="orderNote" rows="2" placeholder="Contoh: Jangan pedas, minta sendok..." class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-200 text-slate-700 py-3 bg-white shadow-sm resize-none"></textarea>
                 </div>
-
                 <button wire:click="submitOrder" wire:loading.attr="disabled" class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-500/20 hover:bg-slate-800 active:scale-95 transition-all flex justify-center items-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed">
                     <span wire:loading.remove>🚀 Kirim Pesanan ke Dapur</span>
                     <span wire:loading>⏳ Sedang Mengirim...</span>
@@ -157,7 +177,6 @@
             </div>
             <h2 class="text-3xl font-black text-slate-800 mb-3 tracking-tight">Pesanan Diterima!</h2>
             <p class="text-slate-500 mb-8 leading-relaxed">Terima kasih <span class="font-bold text-slate-800">{{ $customerName }}</span>! Pesananmu sudah masuk ke sistem dapur kami. Mohon tunggu sebentar ya.</p>
-            
             <button onclick="window.location.reload()" class="w-full bg-slate-100 text-slate-700 py-4 rounded-xl font-bold hover:bg-slate-200 transition-colors">
                 Pesan Menu Lainnya
             </button>

@@ -17,6 +17,11 @@ class ProductManager extends Component
     public $name, $price, $description, $category_id, $image, $product_id;
     public $oldImage; // Untuk menyimpan nama gambar lama saat edit
 
+    // --- TAMBAHAN BARU (FITUR STOK) ---
+    public $stock = 10;           // Default stok awal
+    public $is_available = true;  // Default status aktif
+    // ----------------------------------
+
     // Variabel UI
     public $isModalOpen = false;
     public $isEditMode = false;
@@ -26,9 +31,10 @@ class ProductManager extends Component
     protected $rules = [
         'name' => 'required|min:3',
         'category_id' => 'required',
-        'price' => 'required|numeric',
+        'price' => 'required|numeric|min:0',
         'description' => 'nullable',
         'image' => 'nullable|image|max:2048', // Max 2MB
+        'stock' => 'required|numeric|min:0',  // Validasi Stok
     ];
 
     // Reset halaman saat searching
@@ -41,7 +47,8 @@ class ProductManager extends Component
     public function render()
     {
         return view('livewire.admin.product-manager', [
-            'products' => Product::where('name', 'like', '%' . $this->search . '%')
+            'products' => Product::with('category') // Eager load category biar ringan
+                ->where('name', 'like', '%' . $this->search . '%')
                 ->latest()
                 ->paginate(8),
             'categories' => Category::all(),
@@ -72,6 +79,10 @@ class ProductManager extends Component
         $this->image = null;
         $this->oldImage = null;
         $this->product_id = null;
+
+        // Reset Stok & Status ke Default
+        $this->stock = 10;
+        $this->is_available = true;
     }
 
     // Simpan Data (Create)
@@ -90,10 +101,11 @@ class ProductManager extends Component
             'price' => $this->price,
             'description' => $this->description,
             'image' => $imagePath,
-            'is_available' => true,
+            'stock' => $this->stock,              // Simpan Stok
+            'is_available' => $this->is_available // Simpan Status
         ]);
 
-        session()->flash('message', '✨ Produk berhasil ditambahkan dengan gaya!');
+        session()->flash('message', '✨ Produk berhasil ditambahkan!');
         $this->closeModal();
         $this->resetInputFields();
     }
@@ -109,6 +121,10 @@ class ProductManager extends Component
         $this->description = $product->description;
         $this->oldImage = $product->image;
 
+        // Load Data Stok & Status Lama
+        $this->stock = $product->stock;
+        $this->is_available = (bool) $product->is_available; // Pastikan boolean
+
         $this->isEditMode = true;
         $this->isModalOpen = true;
     }
@@ -121,13 +137,14 @@ class ProductManager extends Component
             'category_id' => 'required',
             'price' => 'required|numeric',
             'image' => 'nullable|image|max:2048',
+            'stock' => 'required|numeric|min:0', // Validasi Stok saat update
         ]);
 
         $product = Product::findOrFail($this->product_id);
 
         $imagePath = $this->oldImage;
         if ($this->image) {
-            // Hapus gambar lama jika ada
+            // Hapus gambar lama jika ada dan file baru diupload
             if ($this->oldImage) {
                 Storage::disk('public')->delete($this->oldImage);
             }
@@ -140,6 +157,8 @@ class ProductManager extends Component
             'price' => $this->price,
             'description' => $this->description,
             'image' => $imagePath,
+            'stock' => $this->stock,              // Update Stok
+            'is_available' => $this->is_available // Update Status
         ]);
 
         session()->flash('message', '🚀 Produk berhasil diperbarui!');

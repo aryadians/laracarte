@@ -41,6 +41,22 @@ class OrderIndex extends Component
     // --- FITUR KERANJANG BELANJA ---
     public function addToCart($productId)
     {
+        // Cek stok dulu sebelum tambah (Validasi Backend)
+        $product = Product::find($productId);
+
+        // Jika produk tidak ada atau stok habis atau tidak aktif, batalkan
+        if (!$product || $product->stock <= 0 || !$product->is_available) {
+            return;
+        }
+
+        // Cek jumlah di cart saat ini
+        $currentQty = isset($this->cart[$productId]) ? $this->cart[$productId] : 0;
+
+        // Cegah tambah jika melebihi stok database
+        if ($currentQty >= $product->stock) {
+            return;
+        }
+
         if (isset($this->cart[$productId])) {
             $this->cart[$productId]++;
         } else {
@@ -102,7 +118,7 @@ class OrderIndex extends Component
         $this->validate([
             'customerName' => 'required|min:3|max:50',
             'cart' => 'required|array|min:1',
-            'orderNote' => 'nullable|string|max:255', // Validasi untuk catatan
+            'orderNote' => 'nullable|string|max:255',
         ], [
             'customerName.required' => 'Nama pemesan wajib diisi ya!',
             'customerName.min' => 'Nama terlalu pendek.',
@@ -118,10 +134,10 @@ class OrderIndex extends Component
             'total_price' => $this->getTotalPrice(),
             'status' => 'pending',      // Status awal: Menunggu
             'payment_method' => 'cash', // Default metode bayar
-            'note' => $this->orderNote, // <-- FIX: Simpan catatan dari input user
+            'note' => $this->orderNote, // Simpan catatan
         ]);
 
-        // 4. Simpan Rincian Item (Looping Cart)
+        // 4. Simpan Rincian Item (Looping Cart) & KURANGI STOK
         $products = Product::whereIn('id', array_keys($this->cart))->get();
 
         foreach ($products as $product) {
@@ -132,6 +148,9 @@ class OrderIndex extends Component
                 'unit_price' => $product->price,
                 'subtotal' => $product->price * $this->cart[$product->id],
             ]);
+
+            // === [UPDATE BARU] KURANGI STOK PRODUK ===
+            $product->decrement('stock', $this->cart[$product->id]);
         }
 
         // 5. Update Status Meja jadi "Terisi"
@@ -144,7 +163,8 @@ class OrderIndex extends Component
 
     public function render()
     {
-        // Filter Produk Berdasarkan Kategori
+        // Filter Produk: Ambil yang is_available TRUE saja.
+        // Kita TETAP ambil yang stok 0 (habis) agar bisa ditampilkan sebagai "Sold Out" di UI.
         $query = Product::query()->where('is_available', true);
 
         if ($this->activeCategory !== 'all') {
