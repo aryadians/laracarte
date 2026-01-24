@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
     // ... route produk manager ...
     Route::get('/orders', \App\Livewire\Admin\OrderList::class)->name('orders');
     Route::get('/tables', \App\Livewire\Admin\TableManager::class)->name('tables');
+    Route::get('/history', \App\Livewire\Admin\OrderHistory::class)->name('history');
 });
 
 // Memuat file auth bawaan (Login, Register, Reset Password, dll)

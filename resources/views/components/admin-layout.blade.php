@@ -40,6 +40,9 @@
                 <x-nav-link-admin href="{{ route('products') }}" :active="request()->routeIs('products')" icon="cube">
                     Produk & Menu
                 </x-nav-link-admin>
+                <x-nav-link-admin href="{{ route('history') }}" :active="request()->routeIs('history')" icon="receipt">
+    Riwayat Transaksi
+</x-nav-link-admin>
 
                 <x-nav-link-admin href="{{ route('tables') }}" :active="request()->routeIs('tables')" icon="table">
     Manajemen Meja
