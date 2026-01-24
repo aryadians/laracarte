@@ -41,9 +41,9 @@
                     Produk & Menu
                 </x-nav-link-admin>
 
-                <x-nav-link-admin href="#" icon="table">
-                    Manajemen Meja
-                </x-nav-link-admin>
+                <x-nav-link-admin href="{{ route('tables') }}" :active="request()->routeIs('tables')" icon="table">
+    Manajemen Meja
+</x-nav-link-admin>
 
                 <div class="text-[0.65rem] font-bold text-slate-500 uppercase tracking-widest mt-8 mb-3 px-4">Kasir</div>
                 
