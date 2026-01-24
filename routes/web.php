@@ -36,6 +36,8 @@ Route::middleware('auth')->group(function () {
     // 3. FIX ERROR LOGOUT
     // Mendefinisikan manual rute logout untuk mencegah error jika file auth.php bermasalah
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    // ... route produk manager ...
+    Route::get('/orders', \App\Livewire\Admin\OrderList::class)->name('orders');
 });
 
 // Memuat file auth bawaan (Login, Register, Reset Password, dll)

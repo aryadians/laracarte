@@ -47,9 +47,9 @@
 
                 <div class="text-[0.65rem] font-bold text-slate-500 uppercase tracking-widest mt-8 mb-3 px-4">Kasir</div>
                 
-                <x-nav-link-admin href="#" icon="receipt">
-                    Pesanan Masuk
-                </x-nav-link-admin>
+                <x-nav-link-admin href="{{ route('orders') }}" :active="request()->routeIs('orders')" icon="receipt">
+    Pesanan Masuk
+</x-nav-link-admin>
             </div>
 
             <div class="p-4 border-t border-slate-800 bg-slate-900">
