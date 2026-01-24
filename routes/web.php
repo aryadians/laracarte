@@ -19,6 +19,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // --> TAMBAHKAN INI: Rute Produk Manager
+    Route::get('/products', \App\Livewire\Admin\ProductManager::class)->name('products');   
+
     // FIX: Definisikan rute logout secara manual di sini agar pasti terbaca
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');

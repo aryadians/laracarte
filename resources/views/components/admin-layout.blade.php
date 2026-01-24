@@ -4,55 +4,86 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>{{ config('app.name', 'LaraCarte Admin') }}</title>
-
+    <title>{{ config('app.name', 'LaraCarte') }}</title>
+    
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800&display=swap" rel="stylesheet" />
+    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased bg-gray-100">
-    <div class="min-h-screen flex flex-col md:flex-row">
+<body class="font-sans antialiased bg-slate-50 text-slate-800">
+    
+    <div class="flex h-screen overflow-hidden w-full">
         
-        <aside class="w-full md:w-64 bg-white border-r border-gray-200 md:min-h-screen">
-            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
-                <span class="text-xl font-bold text-indigo-600">LaraCarte</span>
-                </div>
-            <nav class="p-4 space-y-2">
-                <a href="{{ route('dashboard') }}" class="block p-2 rounded hover:bg-indigo-50 text-gray-700 font-medium {{ request()->routeIs('dashboard') ? 'bg-indigo-50 text-indigo-700' : '' }}">
-                    📊 Dashboard
-                </a>
-                <a href="#" class="block p-2 rounded hover:bg-indigo-50 text-gray-700 font-medium">
-                    🍔 Produk & Menu
-                </a>
-                <a href="#" class="block p-2 rounded hover:bg-indigo-50 text-gray-700 font-medium">
-                    🪑 Manajemen Meja
-                </a>
-                <a href="#" class="block p-2 rounded hover:bg-indigo-50 text-gray-700 font-medium">
-                    🧾 Pesanan Masuk
-                </a>
+        <aside class="w-72 bg-slate-900 flex flex-col shadow-2xl z-50 relative hidden md:flex">
+            <div class="h-20 flex items-center justify-center border-b border-slate-800/50 bg-slate-900">
+                <h1 class="text-2xl font-black tracking-wider text-white">
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Lara</span>Carte<span class="text-indigo-500">.</span>
+                </h1>
+            </div>
+
+            <div class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+                <x-nav-link-admin href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')" icon="home">
+                    Dashboard
+                </x-nav-link-admin>
+
+                <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mt-8 mb-3 px-4">Master Data</div>
                 
-                <form method="POST" action="{{ route('logout') }}" class="mt-8 border-t pt-4">
+                <x-nav-link-admin href="{{ route('products') }}" :active="request()->routeIs('products')" icon="cube">
+                    Produk & Menu
+                </x-nav-link-admin>
+
+                <x-nav-link-admin href="#" icon="table">
+                    Manajemen Meja
+                </x-nav-link-admin>
+
+                <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mt-8 mb-3 px-4">Kasir</div>
+                
+                <x-nav-link-admin href="#" icon="receipt">
+                    Pesanan Masuk
+                </x-nav-link-admin>
+            </div>
+
+            <div class="p-4 border-t border-slate-800 bg-slate-900">
+                <div class="flex items-center gap-3 mb-4 px-2">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg">
+                        {{ substr(Auth::user()->name, 0, 1) }}
+                    </div>
+                    <div class="overflow-hidden">
+                        <p class="text-sm font-bold text-white truncate">{{ Auth::user()->name }}</p>
+                        <p class="text-xs text-slate-400">Administrator</p>
+                    </div>
+                </div>
+                
+                <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="w-full text-left p-2 rounded text-red-600 hover:bg-red-50 font-medium">
-                        🚪 Logout
+                    <button class="w-full flex items-center justify-center py-2.5 text-sm font-semibold text-red-400 bg-red-500/10 rounded-lg hover:bg-red-500 hover:text-white transition-all duration-300">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                        Logout
                     </button>
                 </form>
-            </nav>
+            </div>
         </aside>
 
-        <main class="flex-1 p-6">
-            @if (isset($header))
-                <header class="mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        {{ $header }}
-                    </h2>
-                </header>
-            @endif
+        <div class="flex-1 flex flex-col h-screen overflow-hidden relative bg-slate-50">
+            
+            <header class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-200/60 flex items-center justify-between px-8 z-40">
+                <h2 class="text-xl font-bold text-slate-800">
+                    {{ $header ?? 'LaraCarte Admin' }}
+                </h2>
 
-            {{ $slot }}
-        </main>
+                <div class="flex items-center gap-4">
+                    <button class="p-2 text-slate-400 hover:text-indigo-600 transition-colors relative">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                    </button>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-x-hidden overflow-y-auto p-8">
+                {{ $slot }}
+            </main>
+        </div>
     </div>
 </body>
 </html>
