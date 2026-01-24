@@ -1,17 +1,27 @@
-<x-app-layout>
+<x-admin-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
+        Dashboard
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("You're logged in!") }}
-                </div>
-            </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+            <div class="text-gray-500 text-sm">Total Pesanan Hari Ini</div>
+            <div class="text-3xl font-bold text-gray-800 mt-2">0</div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+            <div class="text-gray-500 text-sm">Pendapatan Hari Ini</div>
+            <div class="text-3xl font-bold text-green-600 mt-2">Rp 0</div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+            <div class="text-gray-500 text-sm">Meja Terisi</div>
+            <div class="text-3xl font-bold text-blue-600 mt-2">0 / 5</div>
         </div>
     </div>
-</x-app-layout>
+    
+    <div class="mt-8 bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+        <h3 class="text-lg font-semibold mb-4">Aktivitas Terbaru</h3>
+        <p class="text-gray-500">Belum ada pesanan masuk.</p>
+    </div>
+</x-admin-layout>
