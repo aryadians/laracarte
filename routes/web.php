@@ -16,9 +16,10 @@ Route::get('/', function () {
 });
 
 // Route Dashboard
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route Dashboard (GANTI BARIS INI)
+Route::get('/dashboard', \App\Livewire\Admin\Dashboard::class)
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 // Group Auth Middleware (Hanya bisa diakses jika sudah login)
 Route::middleware('auth')->group(function () {
