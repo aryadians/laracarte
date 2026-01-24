@@ -1,8 +1,15 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController; // PENTING: Import controller ini
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Livewire\Admin\ProductManager; // Import Livewire Component
 use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/', function () {
     return view('welcome');
@@ -13,22 +20,25 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Group Auth Middleware
+// Group Auth Middleware (Hanya bisa diakses jika sudah login)
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+
+    // 1. FIX ERROR PROFILE
+    // Error "Route [profile] not defined" terjadi karena layout mencari route bernama 'profile'.
+    // Jadi, kita ubah nama 'profile.edit' menjadi 'profile'.
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // --> TAMBAHKAN INI: Rute Produk Manager
-    Route::get('/products', \App\Livewire\Admin\ProductManager::class)->name('products');   
+    // 2. RUTE PRODUK MANAGER (Livewire)
+    Route::get('/products', ProductManager::class)->name('products');
 
-    // FIX: Definisikan rute logout secara manual di sini agar pasti terbaca
-    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
-        ->name('logout');
+    // 3. FIX ERROR LOGOUT
+    // Mendefinisikan manual rute logout untuk mencegah error jika file auth.php bermasalah
+    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
 
-// Memuat file auth.php jika ada (untuk login/register)
-// Gunakan file_exists untuk mencegah error jika file hilang
+// Memuat file auth bawaan (Login, Register, Reset Password, dll)
 if (file_exists(__DIR__ . '/auth.php')) {
     require __DIR__ . '/auth.php';
 }

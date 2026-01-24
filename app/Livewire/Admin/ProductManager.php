@@ -45,7 +45,7 @@ class ProductManager extends Component
                 ->latest()
                 ->paginate(8),
             'categories' => Category::all(),
-        ])->layout('layouts.app'); // Menggunakan layout default Breeze namun nanti kita inject ke slot
+        ])->layout('components.admin-layout', ['header' => 'Produk & Menu']);
     }
 
     // Buka Modal Tambah
