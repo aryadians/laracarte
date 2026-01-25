@@ -50,3 +50,5 @@ if (file_exists(__DIR__ . '/auth.php')) {
 // Rute Publik untuk Pelanggan (Scan QR)
 // URL contoh: http://laracarte.test/order/meja-1-xyz
 Route::get('/order/{slug}', \App\Livewire\Front\OrderIndex::class)->name('order.index');
+Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->name('logout');
