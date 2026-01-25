@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Livewire\Admin\ProductManager; // Import Livewire Component
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\OrderManager;
+use App\Livewire\Admin\TransactionHistory;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/tables', \App\Livewire\Admin\TableManager::class)->name('tables');
     Route::get('/history', \App\Livewire\Admin\OrderHistory::class)->name('history');
     Route::get('/admin/orders', OrderManager::class)->name('admin.orders');
+    Route::get('/history', TransactionHistory::class)->name('admin.history');
 });
 
 // Memuat file auth bawaan (Login, Register, Reset Password, dll)
