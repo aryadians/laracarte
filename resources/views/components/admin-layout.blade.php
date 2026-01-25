@@ -111,14 +111,13 @@
     <div class="sm:ml-72 min-h-screen flex flex-col transition-all duration-300">
         
         <header class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-200/60 flex items-center justify-between px-8 z-40 sticky top-0">
-            <h2 class="text-xl font-bold text-slate-800 tracking-tight">
-                {{ $header ?? 'Halaman Admin' }}
-            </h2>
-            <button class="p-2 text-slate-400 hover:text-indigo-600 transition-colors relative bg-white rounded-full shadow-sm border border-slate-100">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                <span class="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
-            </button>
-        </header>
+    <h2 class="text-xl font-bold text-slate-800 tracking-tight">
+        {{ $header ?? 'Halaman Admin' }}
+    </h2>
+    
+    <livewire:admin.notification-bell />
+
+</header>
         
         <main class="flex-1 overflow-x-hidden overflow-y-auto p-6 md:p-8">
             {{ $slot }}
