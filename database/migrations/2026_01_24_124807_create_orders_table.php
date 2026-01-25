@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('table_id')->constrained()->onDelete('cascade');
             $table->string('customer_name')->nullable(); // Nama pemesan
             $table->decimal('total_price', 10, 2)->default(0);
-            $table->enum('status', ['pending', 'confirmed', 'cooking', 'served', 'paid', 'cancelled'])->default('pending');
+            $table->enum('status', ['pending', 'completed', 'paid'])->default('pending');
             $table->string('payment_method')->nullable(); // cash, qris, transfer
             $table->text('note')->nullable(); // Catatan umum pesanan
             $table->timestamps();

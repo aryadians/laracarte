@@ -6,6 +6,8 @@ use App\Livewire\Admin\ProductManager; // Import Livewire Component
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\OrderManager;
 use App\Livewire\Admin\TransactionHistory;
+use App\Livewire\Front\OrderPage;   
+
 
 /*
 |--------------------------------------------------------------------------
@@ -56,3 +58,4 @@ if (file_exists(__DIR__ . '/auth.php')) {
 Route::get('/order/{slug}', \App\Livewire\Front\OrderIndex::class)->name('order.index');
 Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
+Route::get('/table/{slug}', OrderPage::class)->name('front.order');

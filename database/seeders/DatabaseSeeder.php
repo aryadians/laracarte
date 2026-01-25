@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Database\Seeder;
 use App\Models\User;
+use App\Models\Table;
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\Table;
-use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
@@ -16,89 +16,79 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Buat Akun Admin untuk Login
+        // 1. BUAT USER ADMIN
         User::create([
             'name' => 'Admin LaraCarte',
             'email' => 'admin@laracarte.com',
-            'password' => bcrypt('password'), // Password: password
+            'password' => bcrypt('password123'),
+            'role' => 'admin', // Pastikan kolom role ada di tabel users
         ]);
 
-        // 2. Buat Kategori Menu
-        $coffee = Category::create([
-            'name' => 'Coffee',
-            'slug' => 'coffee',
-            'icon' => '☕',
-            'is_active' => true,
-        ]);
+        $this->command->info('✅ User Admin berhasil dibuat!');
 
-        $nonCoffee = Category::create([
-            'name' => 'Non-Coffee',
-            'slug' => 'non-coffee',
-            'icon' => '🥤',
-            'is_active' => true,
-        ]);
-
-        $meals = Category::create([
-            'name' => 'Makanan Berat',
-            'slug' => 'meals',
-            'icon' => '🍛',
-            'is_active' => true,
-        ]);
-
-        $snacks = Category::create([
-            'name' => 'Snacks',
-            'slug' => 'snacks',
-            'icon' => '🍟',
-            'is_active' => true,
-        ]);
-
-        // 3. Buat Produk Dummy
-
-        // Produk Coffee
-        Product::create([
-            'category_id' => $coffee->id,
-            'name' => 'Kopi Susu Gula Aren',
-            'description' => 'Espresso dengan susu segar dan gula aren asli.',
-            'price' => 18000,
-            'image' => null, // Nanti kita update fitur upload gambar
-            'is_available' => true,
-        ]);
-
-        Product::create([
-            'category_id' => $coffee->id,
-            'name' => 'Americano',
-            'description' => 'Espresso shot dengan air panas.',
-            'price' => 15000,
-            'image' => null,
-            'is_available' => true,
-        ]);
-
-        // Produk Makanan
-        Product::create([
-            'category_id' => $meals->id,
-            'name' => 'Nasi Goreng Spesial',
-            'description' => 'Nasi goreng dengan telor mata sapi dan sate ayam.',
-            'price' => 25000,
-            'image' => null,
-            'is_available' => true,
-        ]);
-
-        Product::create([
-            'category_id' => $snacks->id,
-            'name' => 'French Fries',
-            'description' => 'Kentang goreng renyah dengan saus sambal.',
-            'price' => 12000,
-            'image' => null,
-            'is_available' => true,
-        ]);
-
-        // 4. Buat Data Meja (QR Code Simulation)
-        for ($i = 1; $i <= 5; $i++) {
+        // 2. BUAT DATA MEJA (Agar link QR tidak Not Found)
+        $tables = ['Meja 1', 'Meja 2', 'Meja 3', 'Meja 4', 'Meja 5', 'Meja VIP'];
+        foreach ($tables as $tableName) {
             Table::create([
-                'name' => 'Meja ' . $i,
-                'slug' => Str::random(10), // Kode unik acak untuk QR
-                'status' => 'empty',
+                'name' => $tableName,
+                'slug' => Str::slug($tableName), // meja-1, meja-2, dst
+                'status' => 'empty'
             ]);
         }
+        $this->command->info('✅ 6 Meja berhasil dibuat!');
+
+        // 3. BUAT KATEGORI
+        $catMakanan = Category::create(['name' => 'Makanan Berat', 'slug' => 'makanan-berat']);
+        $catMinuman = Category::create(['name' => 'Minuman', 'slug' => 'minuman']);
+        $catSnack = Category::create(['name' => 'Cemilan', 'slug' => 'cemilan']);
+
+        // 4. BUAT PRODUK/MENU DUMMY
+        $products = [
+            [
+                'category_id' => $catMakanan->id,
+                'name' => 'Nasi Goreng Spesial',
+                'description' => 'Nasi goreng dengan telur, ayam suwir, dan kerupuk udang.',
+                'price' => 25000,
+                'image' => null, // Bisa diisi url gambar jika ada
+                'is_available' => true,
+            ],
+            [
+                'category_id' => $catMakanan->id,
+                'name' => 'Ayam Bakar Madu',
+                'description' => 'Ayam bakar dengan olesan madu murni + lalapan.',
+                'price' => 30000,
+                'image' => null,
+                'is_available' => true,
+            ],
+            [
+                'category_id' => $catMinuman->id,
+                'name' => 'Es Teh Manis',
+                'description' => 'Teh melati asli dengan gula batu.',
+                'price' => 5000,
+                'image' => null,
+                'is_available' => true,
+            ],
+            [
+                'category_id' => $catMinuman->id,
+                'name' => 'Kopi Susu Gula Aren',
+                'description' => 'Kopi house blend dengan susu fresh milk.',
+                'price' => 18000,
+                'image' => null,
+                'is_available' => true,
+            ],
+            [
+                'category_id' => $catSnack->id,
+                'name' => 'Kentang Goreng',
+                'description' => 'French fries renyah dengan saus sambal.',
+                'price' => 15000,
+                'image' => null,
+                'is_available' => true,
+            ],
+        ];
+
+        foreach ($products as $product) {
+            Product::create($product);
+        }
+        $this->command->info('✅ 5 Menu Makanan berhasil dibuat!');
     }
 }

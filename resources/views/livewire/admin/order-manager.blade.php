@@ -1,4 +1,4 @@
-<div wire:poll.10s> <div class="flex justify-between items-center mb-6">
+<div wire:poll.5s> <div class="flex justify-between items-center mb-6">
         <div>
             <h1 class="text-3xl font-black text-slate-800 tracking-tight">Dapur & Pesanan</h1>
             <p class="text-slate-500 text-lg">Pantau pesanan masuk secara real-time.</p>
@@ -28,12 +28,12 @@
     @else
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($orders as $order)
-                <div class="bg-white rounded-3xl shadow-lg border border-slate-100 overflow-hidden flex flex-col relative {{ $order->status == 'completed' ? 'ring-2 ring-green-500' : '' }}">
+                <div wire:key="order-{{ $order->id }}" class="bg-white rounded-3xl shadow-lg border border-slate-100 overflow-hidden flex flex-col relative {{ $order->status == 'completed' ? 'ring-2 ring-green-500' : '' }}">
                     
-                    <div class="px-6 py-4 {{ $order->status == 'pending' ? 'bg-indigo-600' : 'bg-green-600' }} text-white flex justify-between items-center">
+                    <div class="px-6 py-4 {{ $order->status == 'pending' ? 'bg-indigo-600' : 'bg-green-600' }} text-white flex justify-between items-center transition-colors duration-300">
                         <div>
                             <span class="text-[10px] font-bold opacity-75 uppercase tracking-wider block">Meja</span>
-                            <span class="text-2xl font-black">{{ $order->table->name }}</span>
+                            <span class="text-2xl font-black">{{ $order->table->name ?? '?' }}</span>
                         </div>
                         <div class="text-right">
                             <span class="text-[10px] font-bold opacity-75 uppercase tracking-wider block">Total</span>
@@ -72,14 +72,20 @@
 
                     <div class="p-4 bg-white border-t border-slate-100 grid grid-cols-2 gap-3">
                         @if($order->status == 'pending')
-                            <button wire:click="markAsCompleted({{ $order->id }})" class="col-span-2 w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/30 transition-all active:scale-95 flex justify-center items-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                Siap Saji
+                            <button wire:click="markAsCompleted({{ $order->id }})" wire:loading.attr="disabled" class="col-span-2 w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/30 transition-all active:scale-95 flex justify-center items-center gap-2 disabled:opacity-50">
+                                <span wire:loading.remove wire:target="markAsCompleted({{ $order->id }})">
+                                    <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    Siap Saji
+                                </span>
+                                <span wire:loading wire:target="markAsCompleted({{ $order->id }})">Processing...</span>
                             </button>
                         @elseif($order->status == 'completed')
-                            <button wire:click="markAsPaid({{ $order->id }})" class="col-span-2 w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg shadow-green-500/30 transition-all active:scale-95 flex justify-center items-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                                Terima Bayaran
+                            <button wire:click="markAsPaid({{ $order->id }})" wire:loading.attr="disabled" class="col-span-2 w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg shadow-green-500/30 transition-all active:scale-95 flex justify-center items-center gap-2 disabled:opacity-50">
+                                <span wire:loading.remove wire:target="markAsPaid({{ $order->id }})">
+                                    <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                    Terima Bayaran
+                                </span>
+                                <span wire:loading wire:target="markAsPaid({{ $order->id }})">Processing...</span>
                             </button>
                         @endif
 
