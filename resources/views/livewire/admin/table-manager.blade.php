@@ -1,32 +1,36 @@
-<div class="p-6">
-    <div class="flex flex-col md:flex-row gap-8 items-start mb-10">
-        <div class="flex-1">
-            <h2 class="text-3xl font-black text-slate-800 tracking-tight">Manajemen Meja 🪑</h2>
-            <p class="text-slate-500 mt-2">Buat meja baru dan cetak QR Code untuk ditempel.</p>
+<div>
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        <div>
+            <h1 class="text-3xl font-black text-slate-800 tracking-tight">Manajemen Meja 🪑</h1>
+            <p class="text-slate-500 text-lg">Buat meja baru dan cetak QR Code untuk ditempel.</p>
         </div>
-
-        <div class="w-full md:w-96 bg-white p-6 rounded-3xl shadow-xl shadow-indigo-100 border border-indigo-50">
-            <form wire:submit.prevent="store" class="flex flex-col gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Nama Meja Baru</label>
-                    <input wire:model="name" type="text" placeholder="Contoh: Meja 10" class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-200 font-bold text-slate-700">
-                    @error('name') <span class="text-red-500 text-xs font-bold mt-1 block">{{ $message }}</span> @enderror
-                </div>
-                <button type="submit" class="bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800 transition-all flex justify-center items-center gap-2">
-                    <span>+ Tambah Meja</span>
-                </button>
-            </form>
+        
+        <div class="bg-white p-4 rounded-2xl shadow-lg border border-slate-100 flex flex-col md:flex-row gap-3 items-end">
+            <div class="w-full md:w-64">
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 block">Nama Meja Baru</label>
+                <input type="text" wire:model="name" class="w-full bg-slate-50 border-slate-200 rounded-xl font-bold text-slate-700 focus:ring-indigo-500 focus:border-indigo-500 placeholder-slate-300" placeholder="Contoh: Meja 10">
+                @error('name') <span class="text-red-500 text-xs font-bold block mt-1">{{ $message }}</span> @enderror
+            </div>
+            <button wire:click="store" class="px-6 py-2.5 bg-slate-900 hover:bg-black text-white font-bold rounded-xl shadow-lg hover:-translate-y-0.5 transition-all flex items-center gap-2 whitespace-nowrap">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                + Tambah Meja
+            </button>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        @foreach($tables as $table)
-        <div class="group bg-white rounded-3xl p-5 border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
-            
-            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-bl-full -mr-4 -mt-4 opacity-50 group-hover:scale-110 transition-transform"></div>
+    @if (session()->has('message'))
+        <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-r-xl shadow-sm flex items-center animate-fade-in-down">
+            <svg class="w-6 h-6 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <p class="font-bold text-green-800">{{ session('message') }}</p>
+        </div>
+    @endif
 
-            <div class="flex justify-between items-start mb-4 relative z-10">
-                <span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-lg text-xs font-bold border border-indigo-100">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        @foreach($tables as $table)
+        <div class="bg-white rounded-[2rem] p-6 shadow-xl shadow-indigo-100/50 border border-slate-100 relative group hover:-translate-y-1 transition-transform duration-300">
+            
+            <div class="flex justify-between items-center mb-4">
+                <span class="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-lg text-xs font-black uppercase tracking-wider">
                     {{ $table->name }}
                 </span>
                 <button wire:click="delete({{ $table->id }})" wire:confirm="Hapus meja ini?" class="text-slate-300 hover:text-red-500 transition-colors">
@@ -34,27 +38,114 @@
                 </button>
             </div>
 
-            <div class="flex flex-col items-center justify-center py-4">
-                <div class="bg-white p-2 rounded-xl border-2 border-dashed border-slate-200 group-hover:border-indigo-400 transition-colors">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ url('/order/' . $table->slug) }}" 
-                         alt="QR Meja" 
-                         class="w-32 h-32 object-contain rounded-lg">
+            <div class="flex justify-center my-4">
+                <div class="p-3 bg-white border-4 border-slate-900 rounded-xl shadow-sm">
+                    {!! QrCode::size(140)->color(15, 23, 42)->generate(url('/table/' . $table->slug)) !!}
                 </div>
-                
-                <p class="text-[0.65rem] text-slate-400 mt-3 font-mono text-center break-all px-2">
-                    {{ url('/order/' . $table->slug) }}
+            </div>
+
+            <div class="text-center mb-6">
+                <p class="text-[10px] text-slate-400 font-mono truncate px-2 bg-slate-50 py-1 rounded-md">
+                    {{ url('/table/' . $table->slug) }}
                 </p>
             </div>
 
-            <div class="mt-4 grid grid-cols-2 gap-2">
-                <a href="{{ url('/order/' . $table->slug) }}" target="_blank" class="text-center py-2 bg-slate-50 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-100 transition-colors">
-                    🔗 Tes Link
+            <div class="grid grid-cols-2 gap-3">
+                <a href="{{ url('/table/' . $table->slug) }}" target="_blank" class="flex items-center justify-center gap-2 py-2.5 bg-slate-100 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-200 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    Tes Link
                 </a>
-                <button onclick="window.print()" class="text-center py-2 bg-indigo-600 text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-500/30">
-                    🖨️ Print
+                
+                <button onclick="printQr('{{ $table->name }}', '{{ url('/table/' . $table->slug) }}')" class="flex items-center justify-center gap-2 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-500/30 hover:bg-indigo-700 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    Print
                 </button>
             </div>
         </div>
         @endforeach
     </div>
+
+    @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script>
+        function printQr(tableName, url) {
+            // 1. Buat Jendela Popup Baru
+            var printWindow = window.open('', '', 'height=600,width=500');
+
+            // 2. Isi HTML Jendela tersebut
+            printWindow.document.write('<html><head><title>Cetak QR - ' + tableName + '</title>');
+            
+            // 3. Tambahkan CSS Agar Tampilan Cetak Bagus
+            printWindow.document.write(`
+                <style>
+                    body { 
+                        font-family: 'Courier New', Courier, monospace; 
+                        display: flex; 
+                        flex-direction: column; 
+                        align-items: center; 
+                        justify-content: center; 
+                        height: 100vh; 
+                        margin: 0; 
+                        background: #fff;
+                    }
+                    .card {
+                        border: 2px dashed #000;
+                        padding: 40px;
+                        border-radius: 20px;
+                        text-align: center;
+                        width: 300px;
+                    }
+                    h1 { margin: 0 0 10px 0; font-size: 24px; font-weight: 900; }
+                    p { margin: 0 0 20px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; }
+                    .qr-box { 
+                        margin: 20px auto; 
+                        padding: 10px;
+                        border: 4px solid #000;
+                        border-radius: 10px;
+                        display: inline-block;
+                    }
+                    .footer { font-size: 10px; margin-top: 20px; color: #555; }
+                </style>
+            `);
+            printWindow.document.write('</head><body>');
+            
+            // 4. Isi Konten Kartu
+            printWindow.document.write(`
+                <div class="card">
+                    <h1>SCAN HERE</h1>
+                    <p>UNTUK PESAN MENU</p>
+                    
+                    <div id="qr-target" class="qr-box"></div>
+                    
+                    <h1>${tableName}</h1>
+                    <div class="footer">LaraCarte Resto System</div>
+                </div>
+            `);
+
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+
+            // 5. Generate QR Code di dalam Jendela Baru
+            setTimeout(function() {
+                var script = printWindow.document.createElement('script');
+                script.src = "https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js";
+                script.onload = function() {
+                    new printWindow.QRCode(printWindow.document.getElementById("qr-target"), {
+                        text: url,
+                        width: 200,
+                        height: 200
+                    });
+                    
+                    // 6. Trigger Print
+                    setTimeout(function() {
+                        printWindow.focus();
+                        printWindow.print();
+                        printWindow.close();
+                    }, 500);
+                };
+                printWindow.document.head.appendChild(script);
+            }, 100);
+        }
+    </script>
+    @endpush
 </div>
