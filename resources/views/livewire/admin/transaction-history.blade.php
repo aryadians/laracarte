@@ -30,7 +30,12 @@
     <div class="bg-white rounded-3xl shadow-lg border border-slate-100 overflow-hidden">
         <div class="p-6 border-b border-slate-100 flex justify-between items-center">
             <h3 class="font-bold text-slate-800 text-lg">Daftar Pesanan Lunas</h3>
-            <button class="text-indigo-600 text-sm font-bold hover:underline">Export Excel (Coming Soon)</button>
+            
+            <button wire:click="exportCsv" wire:loading.attr="disabled" class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-md shadow-green-500/20">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                <span wire:loading.remove wire:target="exportCsv">Export CSV</span>
+                <span wire:loading wire:target="exportCsv">Proses...</span>
+            </button>
         </div>
 
         <div class="overflow-x-auto">
@@ -38,7 +43,7 @@
                 <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-xs tracking-wider">
                     <tr>
                         <th class="px-6 py-4">ID Pesanan</th>
-                        <th class="px-6 py-4">Waktu</th>
+                        <th class="px-6 py-4">Waktu (WIB)</th>
                         <th class="px-6 py-4">Pelanggan</th>
                         <th class="px-6 py-4">Meja</th>
                         <th class="px-6 py-4 text-right">Total Bayar</th>
@@ -48,11 +53,11 @@
                 <tbody class="divide-y divide-slate-100">
                     @forelse($orders as $order)
                     <tr class="hover:bg-slate-50/50 transition-colors">
-                        <td class="px-6 py-4 font-mono font-bold text-slate-400">#{{ substr($order->id, 0, 8) }}...</td>
-                        <td class="px-6 py-4 font-bold">{{ $order->created_at->format('H:i') }}</td>
+                        <td class="px-6 py-4 font-mono font-bold text-slate-400">#{{ $order->id }}</td>
+                        <td class="px-6 py-4 font-bold">{{ $order->created_at->setTimezone('Asia/Jakarta')->format('H:i') }}</td>
                         <td class="px-6 py-4 font-bold text-slate-800">{{ $order->customer_name }}</td>
                         <td class="px-6 py-4">
-                            <span class="bg-indigo-50 text-indigo-700 px-2 py-1 rounded-lg text-xs font-bold">{{ $order->table->name }}</span>
+                            <span class="bg-indigo-50 text-indigo-700 px-2 py-1 rounded-lg text-xs font-bold">{{ $order->table->name ?? 'Takeaway' }}</span>
                         </td>
                         <td class="px-6 py-4 text-right font-black text-slate-800">Rp {{ number_format($order->total_price, 0, ',', '.') }}</td>
                         <td class="px-6 py-4 text-center">
