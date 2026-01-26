@@ -28,14 +28,19 @@ LaraCarte is a powerful and easy-to-use restaurant management system designed to
 
 ## ✨ Key Features
 
-| Feature              | Description                                                                 |
-| -------------------- | --------------------------------------------------------------------------- |
-| 📦 Product Management | Add, edit, and categorize your menu items with ease.                        |
-| 🍽️ Table Management  | Visually organize your restaurant's floor plan and table status.            |
-| 🛒 Order Processing   | A fast and intuitive interface for taking and managing customer orders.     |
-| 📈 Admin Dashboard   | Get real-time insights into your sales, popular products, and more.         |
-| 🔒 Secure Auth       | Role-based access control for administrators and staff.                     |
-| 🎨 Modern UI         | A stunning and responsive UI built with Tailwind CSS and Alpine.js.         |
+| Feature | Description |
+| --- | --- |
+| 📦 **Product Management** | Add, edit, and categorize your menu items with ease, including stock management. |
+| 🍽️ **Table Management** | Visually organize your restaurant's floor plan and manage table status (available, occupied). |
+| 📱 **Customer Ordering** | A QR-code based menu where customers can browse and place orders directly from their table. |
+| 🛒 **Admin Order Management** | A real-time dashboard for admins to view incoming orders, update their status (pending, cooking, done), and manage the entire order flow. |
+| 🤵 **Waitress Call System** | Allows customers to request a waitress to their table with the click of a button. |
+| 🔔 **Real-time Notifications** | Instant notifications for new orders and waitress calls to keep the staff informed. |
+| 💵 **Cashier Interface** | A dedicated interface for viewing bills, processing payments, and completing orders. |
+| 📜 **Transaction History** | A comprehensive log of all past orders and transactions for accounting and analysis. |
+| 📈 **Insightful Dashboard** | Get real-time insights into sales, popular products, and overall restaurant performance. |
+| 🔒 **Secure Auth** | Role-based access control for administrators, cashiers, and staff. |
+| 🎨 **Modern & Responsive UI**| A stunning and intuitive UI built with Tailwind CSS and Alpine.js that works on any device. |
 
 ## 📸 Screenshots
 
