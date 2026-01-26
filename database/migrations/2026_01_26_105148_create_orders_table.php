@@ -14,19 +14,26 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
 
-            // Relasi ke tabel 'tables' (pastikan tabel tables sudah ada)
-            $table->foreignId('table_id')->constrained()->cascadeOnDelete();
+            // FIX:
+            // 1. nullable() -> Agar bisa buat pesanan 'Takeaway' (tanpa meja).
+            // 2. nullOnDelete() -> Agar riwayat penjualan tidak hilang kalau meja dihapus.
+            $table->foreignId('table_id')
+                ->nullable()
+                ->constrained('tables')
+                ->nullOnDelete();
 
             $table->string('customer_name');
-            $table->text('note')->nullable(); // Catatan opsional
-            $table->decimal('total_price', 12, 2)->default(0); // Total harga
+            $table->text('note')->nullable(); // Catatan (pedas, tanpa bawang, dll)
+
+            // Kolom Total Harga (Penting untuk Laporan)
+            $table->decimal('total_price', 15, 2)->default(0);
 
             // Status pesanan
             $table->enum('status', [
                 'pending',   // Baru masuk
                 'cooking',   // Sedang dimasak
-                'served',    // Sudah disajikan
-                'paid',      // Sudah bayar
+                'served',    // Sudah disajikan (Siap Bayar)
+                'paid',      // Sudah bayar (Lunas)
                 'completed', // Selesai
                 'cancelled'  // Dibatalkan
             ])->default('pending');
