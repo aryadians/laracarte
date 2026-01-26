@@ -8,17 +8,33 @@ use App\Models\Order;
 class OrderManager extends Component
 {
     // Agar halaman otomatis refresh setiap 10 detik untuk cek order baru
-    // Kamu bisa ubah angkanya, misal wire:poll.5s (5 detik)
+    protected $listeners = ['echo:orders,OrderCreated' => '$refresh'];
 
-    public function markAsCompleted($orderId)
+    // Update status jadi SEDANG DIMASAK (Opsional, jika ingin ada proses ini)
+    public function markAsCooking($orderId)
     {
         $order = Order::find($orderId);
-        if ($order) {
-            $order->update(['status' => 'completed']);
-            session()->flash('message', 'Pesanan Meja ' . $order->table->name . ' selesai dimasak!');
+        if ($order && $order->status == 'pending') {
+            $order->update(['status' => 'cooking']);
+            session()->flash('message', 'Pesanan Meja ' . $order->table->name . ' sedang dimasak.');
         }
     }
 
+    // FIX: Tombol "Siap Saji" / "Selesai Masak"
+    // Mengubah status menjadi 'served' (Disajikan), AGAR KASIR BISA BAYAR
+    public function markAsServed($orderId)
+    {
+        $order = Order::find($orderId);
+        if ($order) {
+            // Ubah ke 'served' (Artinya makanan sudah diantar ke meja)
+            // Kasir akan melihat ini sebagai pesanan yang belum dibayar
+            $order->update(['status' => 'served']);
+
+            session()->flash('message', 'Pesanan Meja ' . $order->table->name . ' siap disajikan!');
+        }
+    }
+
+    // (Opsional) Jika Admin Dapur juga bisa terima pembayaran
     public function markAsPaid($orderId)
     {
         $order = Order::find($orderId);
@@ -38,11 +54,11 @@ class OrderManager extends Component
 
     public function render()
     {
-        // Ambil pesanan yang belum dibayar (pending & completed)
-        // Urutkan dari yang terbaru
+        // Ambil pesanan Aktif (Pending, Cooking, Served)
+        // Hilangkan yang sudah 'paid' atau 'completed' agar dapur bersih
         $orders = Order::with(['table', 'items.product'])
-            ->whereIn('status', ['pending', 'completed']) // Tampilkan yg belum lunas
-            ->orderBy('created_at', 'desc')
+            ->whereIn('status', ['pending', 'cooking', 'served'])
+            ->orderBy('created_at', 'asc') // Urutkan dari yang paling lama antri (FIFO)
             ->get();
 
         return view('livewire.admin.order-manager', [
