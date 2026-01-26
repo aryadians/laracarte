@@ -8,12 +8,13 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderItem;
-use Illuminate\Support\Str;
+use App\Models\WaitressCall;
+use Illuminate\Support\Facades\DB;
 
 class OrderPage extends Component
 {
     public $table;
-    public $table_name; // To display in the header
+    public $table_name;
 
     // UI & Filter State
     public $activeCategory = 'all';
@@ -24,30 +25,25 @@ class OrderPage extends Component
     public $customerName = '';
     public $orderNote = '';
 
-    /**
-     * Initialize the component, find the table by its slug,
-     * and set the table ID in the session.
-     */
     public function mount($slug)
     {
         $this->table = Table::where('slug', $slug)->firstOrFail();
         $this->table_name = $this->table->name;
-
         session()->put('table_id', $this->table->id);
     }
 
-    // --- CATEGORY FILTER ---
     public function setCategory($id)
     {
         $this->activeCategory = $id;
     }
 
-    // --- CART FEATURES ---
+    // --- CART ---
     public function addToCart($productId)
     {
         $product = Product::find($productId);
-        if (!$product || $product->stock <= ($this->cart[$productId] ?? 0)) {
-            // Optional: Add a flash message for out of stock
+
+        // Validasi stok
+        if (!$product || !$product->is_available || $product->stock <= ($this->cart[$productId] ?? 0)) {
             return;
         }
 
@@ -77,20 +73,24 @@ class OrderPage extends Component
     public function getTotalPrice()
     {
         $total = 0;
-        if (empty($this->cart)) {
-            return 0;
-        }
+        if (empty($this->cart)) return 0;
+
         $products = Product::whereIn('id', array_keys($this->cart))->get();
         foreach ($products as $product) {
-            $total += $product->price * $this->cart[$product->id];
+            if (isset($this->cart[$product->id])) {
+                $total += $product->price * $this->cart[$product->id];
+            }
         }
         return $total;
     }
 
-    // --- CHECKOUT MODAL ---
+    // --- CHECKOUT ---
+    // FIX: Nama method disamakan dengan view menjadi 'openCheckout'
     public function openCheckout()
     {
-        $this->isCheckoutOpen = true;
+        if (count($this->cart) > 0) {
+            $this->isCheckoutOpen = true;
+        }
     }
 
     public function closeCheckout()
@@ -98,70 +98,75 @@ class OrderPage extends Component
         $this->isCheckoutOpen = false;
     }
 
-    // --- ORDER SUBMISSION ---
+    // --- CALL WAITRESS ---
+    public function callWaitress()
+    {
+        $existingCall = WaitressCall::where('table_id', $this->table->id)
+            ->where('status', 'pending')
+            ->first();
+
+        if (!$existingCall) {
+            WaitressCall::create([
+                'table_id' => $this->table->id,
+                'status' => 'pending'
+            ]);
+        }
+        session()->flash('success_waitress', 'Pelayan sedang menuju ke mejamu!');
+    }
+
+    // --- SUBMIT ---
     public function submitOrder()
     {
         $this->validate([
-            'customerName' => 'required|min:3|max:50',
+            'customerName' => 'required|string|min:3|max:50',
         ], [
-            'customerName.required' => 'Nama pemesan wajib diisi.',
-            'customerName.min' => 'Nama pemesan minimal 3 karakter.',
-            'customerName.max' => 'Nama pemesan maksimal 50 karakter.',
+            'customerName.required' => 'Nama wajib diisi ya!',
+            'customerName.min' => 'Nama terlalu pendek.',
         ]);
 
-        // 1. Create the main order
-        $order = Order::create([
-            'table_id' => $this->table->id,
-            'customer_name' => $this->customerName,
-            'note' => $this->orderNote,
-            'total_price' => $this->getTotalPrice(),
-            'status' => 'pending' // Initial status
-        ]);
+        // Gunakan Try-Catch untuk menangkap Error Database
+        try {
+            DB::transaction(function () {
+                // 1. Buat Order
+                $order = Order::create([
+                    'table_id' => $this->table->id,
+                    'customer_name' => $this->customerName,
+                    'note' => $this->orderNote, // Pastikan kolom ini ada di DB orders
+                    'total_price' => $this->getTotalPrice(),
+                    'status' => 'pending'
+                ]);
 
-        // 2. Save ordered items
-        $productsToUpdateStock = [];
-        foreach ($this->cart as $productId => $qty) {
-            $product = Product::find($productId);
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $product->id,
-                'quantity' => $qty,
-                'price' => $product->price
-            ]);
-            
-            // Prepare data for stock reduction
-            $productsToUpdateStock[$productId] = $qty;
+                // 2. Simpan Item
+                foreach ($this->cart as $productId => $qty) {
+                    $product = Product::lockForUpdate()->find($productId);
+
+                    if ($product && $product->stock >= $qty) {
+                        OrderItem::create([
+                            'order_id' => $order->id,
+                            'product_id' => $product->id,
+                            'quantity' => $qty,
+                            'price' => $product->price
+                        ]);
+                        $product->decrement('stock', $qty);
+                    }
+                }
+            });
+
+            // Jika Berhasil:
+            $this->cart = [];
+            $this->isCheckoutOpen = false;
+            $this->customerName = '';
+            $this->orderNote = '';
+            session()->flash('success', true);
+        } catch (\Exception $e) {
+            // JIKA ERROR: Tampilkan pesan errornya di layar agar tahu masalahnya
+            $this->addError('checkout_error', 'Gagal: ' . $e->getMessage());
         }
-
-        // Optional: Reduce stock in a batch
-        foreach ($productsToUpdateStock as $id => $qty) {
-            Product::find($id)->decrement('stock', $qty);
-        }
-
-        // 3. Reset state & notify success
-        $this->cart = [];
-        $this->isCheckoutOpen = false;
-        $this->customerName = '';
-        $this->orderNote = '';
-
-        session()->flash('success', true); // Trigger success popup
     }
 
-    /**
-     * Dummy function to simulate calling a waitress.
-     */
-    public function callWaitress()
-    {
-        session()->flash('info', '✅ Siap! Pelayan akan segera datang ke meja Anda.');
-    }
-
-    // --- RENDER METHOD ---
     public function render()
     {
-        // Get all categories for the top navigation
         $categories = Category::all();
-
-        // Get products based on the active category filter
         $products = Product::query()
             ->where('is_available', true)
             ->when($this->activeCategory !== 'all', function ($q) {

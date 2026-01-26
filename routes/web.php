@@ -6,7 +6,7 @@ use App\Livewire\Admin\ProductManager; // Import Livewire Component
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\OrderManager;
 use App\Livewire\Admin\TransactionHistory;
-use App\Livewire\Front\OrderPage;   
+use App\Livewire\Front\OrderPage;
 
 
 /*
@@ -16,7 +16,7 @@ use App\Livewire\Front\OrderPage;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 // Route Dashboard

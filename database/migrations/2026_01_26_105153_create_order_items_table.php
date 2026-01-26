@@ -13,12 +13,19 @@ return new class extends Migration
     {
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained()->onDelete('cascade');
-            $table->foreignId('product_id')->constrained();
+
+            // Relasi ke tabel 'orders'
+            $table->foreignId('order_id')->constrained()->cascadeOnDelete();
+
+            // Relasi ke tabel 'products'
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+
             $table->integer('quantity');
-            $table->decimal('unit_price', 10, 2); // Simpan harga saat beli (jaga-jaga harga produk berubah)
-            $table->decimal('subtotal', 10, 2);
-            $table->string('note')->nullable(); // "Jangan pedas", "Es dikit"
+
+            // Menyimpan harga saat transaksi terjadi (Snapshot Price)
+            // Penting agar jika harga produk berubah nanti, data sejarah tidak ikut berubah
+            $table->decimal('price', 12, 2);
+
             $table->timestamps();
         });
     }

@@ -4,15 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Order extends Model
+class WaitressCall extends Model
 {
     protected $guarded = [];
-    
-
-    public function items()
-    {
-        return $this->hasMany(OrderItem::class);
-    }
 
     public function table()
     {
