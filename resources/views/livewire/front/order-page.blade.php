@@ -1,5 +1,6 @@
 <div class="relative min-h-screen pb-32" x-data>
 
+    {{-- NOTIFIKASI PELAYAN --}}
     @if(session()->has('success_waitress'))
     <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 4000)" x-show="show" x-transition
         class="fixed top-24 left-1/2 -translate-x-1/2 z-[150] w-max max-w-[90%] px-4">
@@ -13,6 +14,7 @@
     </div>
     @endif
 
+    {{-- HEADER --}}
     <div class="sticky top-0 z-40 bg-[#F6F8FC]/95 backdrop-blur-md border-b border-slate-200/60 shadow-sm transition-all">
         <div class="px-5 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
@@ -38,6 +40,7 @@
             </button>
         </div>
 
+        {{-- KATEGORI --}}
         <div class="flex overflow-x-auto gap-2 px-5 pb-3 pt-1 no-scrollbar scroll-smooth">
             <button wire:click="setCategory('all')" 
                 class="flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 border {{ $activeCategory === 'all' ? 'bg-slate-900 text-white border-slate-900 shadow-md transform scale-105' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50' }}">
@@ -52,6 +55,7 @@
         </div>
     </div>
 
+    {{-- LIST PRODUK --}}
     <div class="p-5 space-y-4 min-h-[60vh]">
         @if($products->isEmpty())
             <div class="flex flex-col items-center justify-center py-20 opacity-50">
@@ -122,6 +126,7 @@
         @endif
     </div>
 
+    {{-- TOMBOL FLOATING CHECKOUT --}}
     @if(count($cart) > 0)
     <div class="fixed bottom-0 left-0 w-full px-5 pb-6 z-[100] pointer-events-none flex justify-center">
         <div class="w-full max-w-md pointer-events-auto">
@@ -143,52 +148,112 @@
     </div>
     @endif
 
+    {{-- MODAL CHECKOUT (DIPERBAIKI) --}}
     @if($isCheckoutOpen)
     <div class="fixed inset-0 z-[110] flex items-end justify-center px-2 pb-2">
         <div wire:click="closeCheckout" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
         
-        <div class="bg-white w-full max-w-md rounded-[2rem] p-6 relative shadow-2xl animate-slide-up max-h-[85vh] flex flex-col">
-            <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 shrink-0"></div>
+        <div class="bg-white w-full max-w-md rounded-t-[2rem] md:rounded-[2rem] relative shadow-2xl animate-slide-up max-h-[90vh] flex flex-col overflow-hidden">
             
-            <div class="flex justify-between items-center mb-6 shrink-0">
-                <h2 class="text-xl font-black text-slate-800 tracking-tight">Konfirmasi Pesanan</h2>
-                <button wire:click="closeCheckout" class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-200">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
+            <div class="p-6 pb-2 shrink-0 bg-white z-10">
+                <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-black text-slate-800 tracking-tight">Konfirmasi Pesanan</h2>
+                    <button wire:click="closeCheckout" class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
             </div>
 
-            <div class="overflow-y-auto custom-scrollbar flex-1 mb-6 -mr-2 pr-2 space-y-3">
-                @foreach($products->whereIn('id', array_keys($cart)) as $item)
-                <div class="flex gap-4 p-3 bg-slate-50 rounded-2xl border border-slate-100 items-center">
-                    <div class="bg-white text-indigo-600 w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-xl font-black text-sm border border-slate-100 shadow-sm">
-                        {{ $cart[$item->id] }}x
+            <div class="overflow-y-auto px-6 py-2 flex-1 custom-scrollbar">
+                
+                {{-- List Pesanan --}}
+                <div class="space-y-3 mb-6">
+                    @foreach($products->whereIn('id', array_keys($cart)) as $item)
+                    <div class="flex gap-4 p-3 bg-slate-50 rounded-2xl border border-slate-100 items-center">
+                        <div class="bg-white text-indigo-600 w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-xl font-black text-sm border border-slate-100 shadow-sm">
+                            {{ $cart[$item->id] }}x
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-slate-800 text-sm line-clamp-1">{{ $item->name }}</h4>
+                            <p class="text-xs text-slate-400">@ Rp {{ number_format($item->price, 0, ',', '.') }}</p>
+                        </div>
+                        <div class="font-bold text-slate-800 text-sm">
+                            Rp {{ number_format($item->price * $cart[$item->id], 0, ',', '.') }}
+                        </div>
                     </div>
-                    <div class="flex-1">
-                        <h4 class="font-bold text-slate-800 text-sm line-clamp-1">{{ $item->name }}</h4>
-                        <p class="text-xs text-slate-400">@ Rp {{ number_format($item->price, 0, ',', '.') }}</p>
-                    </div>
-                    <div class="font-bold text-slate-800 text-sm">
-                        Rp {{ number_format($item->price * $cart[$item->id], 0, ',', '.') }}
-                    </div>
+                    @endforeach
                 </div>
-                @endforeach
+
+                {{-- Divider --}}
+                <div class="border-t border-slate-100 my-4"></div>
+
+                {{-- Total & Form (Dipindahkan ke scrollable area agar tidak terpotong) --}}
+                <div class="space-y-4 pb-4">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-slate-500 text-sm">Grand Total</span>
+                        <span class="font-black text-indigo-600 text-2xl">Rp {{ number_format($this->getTotalPrice(), 0, ',', '.') }}</span>
+                    </div>
+
+                    {{-- Form Input --}}
+                    <div class="space-y-3">
+                        <div>
+                            <input wire:model.blur="customerName" type="text" placeholder="Nama Pemesan (Wajib)" class="w-full rounded-2xl border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-indigo-500 font-bold text-slate-800 py-3.5 text-sm transition-all shadow-inner">
+                            @error('customerName') <span class="text-red-500 text-xs font-bold ml-1 block">{{ $message }}</span> @enderror
+                        </div>
+                        
+                        <textarea wire:model.blur="orderNote" rows="2" placeholder="Catatan (Opsional)" class="w-full rounded-2xl border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-indigo-500 text-slate-800 py-3.5 text-sm resize-none transition-all shadow-inner"></textarea>
+                    </div>
+
+                    {{-- Pilihan Pembayaran --}}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 mt-2">Metode Pembayaran</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="cursor-pointer relative">
+                                <input type="radio" wire:model.live="paymentMethod" value="cashier" class="peer sr-only">
+                                <div class="p-3 rounded-xl border-2 border-slate-100 bg-white peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:text-indigo-700 transition-all text-center h-full flex flex-col items-center justify-center gap-1 hover:border-slate-200">
+                                    <span class="text-2xl">💵</span>
+                                    <span class="text-xs font-bold">Bayar di Kasir</span>
+                                    <span class="text-[10px] text-slate-400">Tunai / Debit nanti</span>
+                                </div>
+                                <div class="absolute top-2 right-2 hidden peer-checked:block text-indigo-600">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer relative">
+                                <input type="radio" wire:model.live="paymentMethod" value="qris" class="peer sr-only">
+                                <div class="p-3 rounded-xl border-2 border-slate-100 bg-white peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:text-indigo-700 transition-all text-center h-full flex flex-col items-center justify-center gap-1 hover:border-slate-200">
+                                    <span class="text-2xl">📱</span>
+                                    <span class="text-xs font-bold">Scan QRIS</span>
+                                    <span class="text-[10px] text-slate-400">Gopay / OVO / Dana</span>
+                                </div>
+                                <div class="absolute top-2 right-2 hidden peer-checked:block text-indigo-600">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    {{-- Tampilan QRIS (Masuk Scrollable Area) --}}
+                    @if($paymentMethod == 'qris')
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center animate-fade-in-down">
+                        <p class="text-xs font-bold text-slate-500 mb-2">Scan QRIS di bawah ini:</p>
+                        <div class="bg-white p-2 inline-block rounded-lg shadow-sm border border-slate-100 mb-2">
+                            <img src="{{ asset('qris.jpg') }}" class="w-32 h-32 object-contain mx-auto">
+                        </div>
+                        <div class="bg-indigo-50 rounded-lg p-2 border border-indigo-100 inline-block w-full">
+                            <p class="text-[10px] text-indigo-400 uppercase font-bold tracking-widest">Total Transfer</p>
+                            <p class="text-lg font-black text-indigo-600">Rp {{ number_format($this->getTotalPrice(), 0, ',', '.') }}</p>
+                        </div>
+                        <p class="text-[10px] text-red-500 mt-2 italic">*Pastikan nominal transfer sesuai.</p>
+                    </div>
+                    @endif
+                </div>
             </div>
 
-            <div class="space-y-3 shrink-0 pt-4 border-t border-slate-100">
-                <div class="flex justify-between items-center pb-2">
-                    <span class="font-bold text-slate-500 text-sm">Grand Total</span>
-                    <span class="font-black text-indigo-600 text-2xl">Rp {{ number_format($this->getTotalPrice(), 0, ',', '.') }}</span>
-                </div>
-
-                <div>
-                    <input wire:model.blur="customerName" type="text" placeholder="Nama Pemesan (Wajib)" class="w-full rounded-2xl border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-indigo-500 font-bold text-slate-800 py-3.5 text-sm transition-all shadow-inner">
-                    @error('customerName') <span class="text-red-500 text-xs font-bold ml-1 block">{{ $message }}</span> @enderror
-                </div>
-                
-                <textarea wire:model.blur="orderNote" rows="2" placeholder="Catatan (Opsional)" class="w-full rounded-2xl border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-indigo-500 text-slate-800 py-3.5 text-sm resize-none transition-all shadow-inner"></textarea>
-                
+            <div class="p-6 pt-4 shrink-0 bg-white border-t border-slate-50 z-10">
                 @error('checkout_error')
-                    <div class="bg-red-50 border-l-4 border-red-500 p-3 rounded-r-lg">
+                    <div class="bg-red-50 border-l-4 border-red-500 p-3 rounded-r-lg mb-3">
                         <div class="flex">
                             <div class="flex-shrink-0">
                                 <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
@@ -196,15 +261,21 @@
                                 </svg>
                             </div>
                             <div class="ml-3">
-                                <p class="text-sm text-red-700 font-bold">Terjadi Kesalahan:</p>
+                                <p class="text-sm text-red-700 font-bold">Gagal:</p>
                                 <p class="text-xs text-red-600">{{ $message }}</p>
                             </div>
                         </div>
                     </div>
                 @enderror
 
-                <button wire:click="submitOrder" wire:loading.attr="disabled" wire:target="submitOrder" class="w-full bg-slate-900 text-white font-bold py-4 rounded-2xl shadow-xl shadow-slate-900/30 hover:bg-slate-800 active:scale-95 transition-all disabled:opacity-50 mt-2 flex justify-center items-center gap-2">
-                    <span wire:loading.remove wire:target="submitOrder">🚀 Kirim Pesanan</span>
+                <button wire:click="submitOrder" wire:loading.attr="disabled" wire:target="submitOrder" class="w-full bg-slate-900 text-white font-bold py-4 rounded-2xl shadow-xl shadow-slate-900/30 hover:bg-slate-800 active:scale-95 transition-all disabled:opacity-50 flex justify-center items-center gap-2">
+                    <span wire:loading.remove wire:target="submitOrder">
+                        @if($paymentMethod == 'qris')
+                            🚀 Saya Sudah Transfer & Pesan
+                        @else
+                            👨‍🍳 Pesan Sekarang
+                        @endif
+                    </span>
                     <span wire:loading wire:target="submitOrder" class="flex items-center gap-2">
                         <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                         Memproses...
@@ -215,6 +286,7 @@
     </div>
     @endif
 
+    {{-- MODAL SUKSES --}}
     @if(session()->has('success'))
     <div class="fixed inset-0 z-[120] flex items-center justify-center bg-white/95 backdrop-blur-md px-6 animate-fade-in">
         <div class="text-center w-full max-w-sm">
@@ -222,7 +294,9 @@
                 <svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
             </div>
             <h2 class="text-3xl font-black text-slate-800 mb-2">Berhasil!</h2>
-            <p class="text-slate-500 text-sm mb-8">Pesananmu sudah masuk antrian dapur.</p>
+            {{-- Pesan Sukses Dinamis dari Session PHP --}}
+            <p class="text-slate-500 text-sm mb-8 px-4">{{ session('success') }}</p>
+            
             <button onclick="window.location.reload()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold hover:bg-slate-800 transition-colors shadow-lg">
                 Pesan Lagi
             </button>

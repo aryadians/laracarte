@@ -25,6 +25,9 @@ class OrderPage extends Component
     public $customerName = '';
     public $orderNote = '';
 
+    // BARU: Pilihan Pembayaran (Default: Bayar di Kasir)
+    public $paymentMethod = 'cashier';
+
     public function mount($slug)
     {
         $this->table = Table::where('slug', $slug)->firstOrFail();
@@ -37,12 +40,12 @@ class OrderPage extends Component
         $this->activeCategory = $id;
     }
 
-    // --- CART ---
+    // --- CART LOGIC ---
     public function addToCart($productId)
     {
         $product = Product::find($productId);
 
-        // Validasi stok
+        // Validasi stok & ketersediaan
         if (!$product || !$product->is_available || $product->stock <= ($this->cart[$productId] ?? 0)) {
             return;
         }
@@ -84,8 +87,7 @@ class OrderPage extends Component
         return $total;
     }
 
-    // --- CHECKOUT ---
-    // FIX: Nama method disamakan dengan view menjadi 'openCheckout'
+    // --- CHECKOUT UI ---
     public function openCheckout()
     {
         if (count($this->cart) > 0) {
@@ -114,53 +116,72 @@ class OrderPage extends Component
         session()->flash('success_waitress', 'Pelayan sedang menuju ke mejamu!');
     }
 
-    // --- SUBMIT ---
+    // --- SUBMIT ORDER (INTI PERUBAHAN) ---
     public function submitOrder()
     {
         $this->validate([
             'customerName' => 'required|string|min:3|max:50',
+            'paymentMethod' => 'required|in:cashier,qris', // Validasi Metode Pembayaran
         ], [
             'customerName.required' => 'Nama wajib diisi ya!',
             'customerName.min' => 'Nama terlalu pendek.',
         ]);
 
-        // Gunakan Try-Catch untuk menangkap Error Database
+        if (empty($this->cart)) return;
+
         try {
             DB::transaction(function () {
                 // 1. Buat Order
                 $order = Order::create([
                     'table_id' => $this->table->id,
                     'customer_name' => $this->customerName,
-                    'note' => $this->orderNote, // Pastikan kolom ini ada di DB orders
+                    'note' => $this->orderNote,
                     'total_price' => $this->getTotalPrice(),
-                    'status' => 'pending'
+                    'status' => 'pending',
+                    'payment_method' => $this->paymentMethod, // Simpan Pilihan User
+                    'stock_reduced' => true, // KITA KURANGI STOK DISINI (Agar tidak double di kasir)
                 ]);
 
-                // 2. Simpan Item
+                // 2. Simpan Item & Kurangi Stok
                 foreach ($this->cart as $productId => $qty) {
+                    // Lock for update agar stok aman saat transaksi bersamaan
                     $product = Product::lockForUpdate()->find($productId);
 
-                    if ($product && $product->stock >= $qty) {
+                    if ($product) {
+                        // Cek stok lagi biar aman
+                        if ($product->stock < $qty) {
+                            throw new \Exception("Stok {$product->name} habis/kurang!");
+                        }
+
                         OrderItem::create([
                             'order_id' => $order->id,
                             'product_id' => $product->id,
                             'quantity' => $qty,
                             'price' => $product->price
                         ]);
+
+                        // Kurangi stok sekarang (Reservasi stok)
                         $product->decrement('stock', $qty);
                     }
                 }
             });
 
-            // Jika Berhasil:
+            // 3. Reset Cart & UI
             $this->cart = [];
             $this->isCheckoutOpen = false;
             $this->customerName = '';
             $this->orderNote = '';
-            session()->flash('success', true);
+            $this->paymentMethod = 'cashier'; // Reset ke default
+
+            // 4. Kirim Pesan Sukses (Beda pesan tergantung metode)
+            if ($this->paymentMethod == 'qris') {
+                session()->flash('success', 'Pesanan masuk! Mohon tunjukkan bukti transfer ke kasir.');
+            } else {
+                session()->flash('success', 'Pesanan berhasil! Silakan bayar di kasir setelah makan.');
+            }
         } catch (\Exception $e) {
-            // JIKA ERROR: Tampilkan pesan errornya di layar agar tahu masalahnya
-            $this->addError('checkout_error', 'Gagal: ' . $e->getMessage());
+            // Tampilkan error ke user
+            $this->addError('checkout_error', 'Gagal memproses pesanan: ' . $e->getMessage());
         }
     }
 

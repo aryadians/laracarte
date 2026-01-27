@@ -32,7 +32,21 @@
                     <td class="px-6 py-4 font-mono text-xs">#{{ $order->id }}</td>
                     <td class="px-6 py-4">{{ $order->created_at->setTimezone('Asia/Jakarta')->format('H:i') }}</td>
                     <td class="px-6 py-4 font-bold">{{ $order->table->name ?? 'Takeaway' }}</td>
-                    <td class="px-6 py-4">{{ $order->customer_name }}</td>
+                    
+                    {{-- KOLOM PELANGGAN + METODE BAYAR --}}
+                    <td class="px-6 py-4">
+                        <div class="font-bold text-slate-800">{{ $order->customer_name }}</div>
+                        
+                        @if($order->payment_method == 'qris' && $order->status != 'paid')
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-700 border border-purple-200 mt-1 animate-pulse">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 14.5V12m0 0V8.882c0-1.126.965-1.956 1.99-1.637l.01.002.01.003c.125.04.25.07.376.096A4.953 4.953 0 0118 10.686V13m-2.222-7.5a4.956 4.956 0 00-4.556 0M10.889 5.5a4.956 4.956 0 00-4.556 0m2.222 7.5V13m0-2.314v-2.11c0-1.29 1.155-2.27 2.433-2.09A4.95 4.95 0 0110 10.686v2.314"></path></svg>
+                                Cek Mutasi (QRIS)
+                            </span>
+                        @elseif($order->payment_method == 'qris')
+                            <span class="text-[10px] text-purple-600 font-bold">via QRIS</span>
+                        @endif
+                    </td>
+
                     <td class="px-6 py-4 font-bold text-slate-800">Rp {{ number_format($order->total_price, 0, ',', '.') }}</td>
                     <td class="px-6 py-4 text-center">
                         <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase
@@ -84,6 +98,18 @@
                 <div>
                     <h4 class="font-bold text-slate-700 mb-4 uppercase text-xs tracking-wider">Rincian Pesanan</h4>
                     
+                    @if($selectedOrder->payment_method == 'qris' && $selectedOrder->status != 'paid')
+                    <div class="mb-4 bg-purple-50 border border-purple-200 rounded-xl p-3 flex items-start gap-3">
+                        <div class="bg-purple-100 text-purple-600 rounded-full p-1 mt-0.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-purple-700 uppercase">Pelanggan Sudah Scan QRIS</p>
+                            <p class="text-[11px] text-purple-600 leading-tight mt-1">Cek mutasi bank senilai <b>Rp {{ number_format($grandTotal, 0, ',', '.') }}</b>. Jika masuk, langsung klik Lunas.</p>
+                        </div>
+                    </div>
+                    @endif
+
                     <div class="space-y-3 pb-4 mb-2">
                         @foreach($selectedOrder->items as $item)
                         <div class="flex justify-between items-start text-sm">
@@ -133,6 +159,25 @@
                             </button>
                         </div>
                     @else
+                        {{-- JIKA QRIS DARI MEJA, LANGSUNG TAMPILKAN TOMBOL KONFIRMASI --}}
+                        @if($selectedOrder->payment_method == 'qris')
+                            <div class="bg-white p-4 rounded-xl border border-purple-100 shadow-sm text-center mb-4">
+                                <p class="text-xs font-bold text-purple-500 uppercase mb-2">Konfirmasi QRIS</p>
+                                <p class="text-sm text-slate-600 mb-4">Pelanggan memilih metode transfer di meja.</p>
+                                
+                                <button wire:click="markAsQrisPaid" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 shadow-lg shadow-green-500/30 transition-all active:scale-95 flex justify-center items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    Uang Masuk (Lunas)
+                                </button>
+                            </div>
+                            
+                            <div class="relative flex py-2 items-center">
+                                <div class="flex-grow border-t border-gray-200"></div>
+                                <span class="flex-shrink-0 mx-4 text-gray-400 text-[10px] uppercase font-bold">Atau ubah metode</span>
+                                <div class="flex-grow border-t border-gray-200"></div>
+                            </div>
+                        @endif
+
                         <div>
                             <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Uang Diterima (Rp)</label>
                             <input wire:model.live="paymentAmount" type="number" class="w-full text-right text-3xl font-black text-slate-800 bg-white border border-slate-200 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 p-4" placeholder="0">
@@ -250,6 +295,12 @@
                     <span>Rp {{ number_format($grandTotal, 0, ',', '.') }}</span>
                 </div>
                 <div class="flex justify-between font-normal text-[10px]">
+                    <span>Metode</span>
+                    <span>{{ $selectedOrder->payment_method == 'qris' ? 'QRIS' : 'Tunai' }}</span>
+                </div>
+                
+                @if($selectedOrder->payment_method != 'qris')
+                <div class="flex justify-between font-normal text-[10px]">
                     <span>Tunai</span>
                     <span>{{ number_format((int)$paymentAmount, 0, ',', '.') }}</span>
                 </div>
@@ -257,6 +308,7 @@
                     <span>Kembali</span>
                     <span>{{ number_format((int)$changeAmount, 0, ',', '.') }}</span>
                 </div>
+                @endif
             </div>
 
             <div class="dashed-line my-4"></div>
