@@ -20,6 +20,9 @@ class Cashier extends Component
     public $service = 0;      // Service Charge 5%
     public $grandTotal = 0;   // Total Akhir yang harus dibayar
 
+    // Variabel Modal QRIS
+    public $isQrisModalOpen = false;
+
     protected $rules = [
         'paymentAmount' => 'required|numeric|min:0',
     ];
@@ -37,7 +40,7 @@ class Cashier extends Component
                 return $item->price * $item->quantity;
             });
 
-            // 2. Hitung Service Charge 5% (Opsional, sesuaikan kebijakan restoran)
+            // 2. Hitung Service Charge 5% (Opsional)
             $this->service = ceil($this->subtotal * 0.05);
 
             // 3. Hitung PPN 11% (Dari Subtotal + Service)
@@ -49,6 +52,7 @@ class Cashier extends Component
             // Reset input pembayaran
             $this->paymentAmount = 0;
             $this->changeAmount = 0;
+            $this->isQrisModalOpen = false; // Pastikan QRIS tertutup saat buka baru
         }
     }
 
@@ -58,7 +62,7 @@ class Cashier extends Component
     public function closeDetail()
     {
         $this->selectedOrder = null;
-        $this->reset(['paymentAmount', 'changeAmount', 'subtotal', 'tax', 'service', 'grandTotal']);
+        $this->reset(['paymentAmount', 'changeAmount', 'subtotal', 'tax', 'service', 'grandTotal', 'isQrisModalOpen']);
     }
 
     /**
@@ -66,14 +70,14 @@ class Cashier extends Component
      */
     public function updatedPaymentAmount()
     {
-        // Hitung kembalian berdasarkan Grand Total (bukan total_price lama)
+        // Hitung kembalian berdasarkan Grand Total
         if (is_numeric($this->paymentAmount)) {
             $this->changeAmount = (int)$this->paymentAmount - (int)$this->grandTotal;
         }
     }
 
     /**
-     * Proses Pembayaran (Tandai Lunas & Potong Stok)
+     * Proses Pembayaran Tunai (Tandai Lunas & Potong Stok)
      */
     public function markAsPaid()
     {
@@ -106,10 +110,42 @@ class Cashier extends Component
         // Jangan close detail agar kasir bisa langsung cetak struk
     }
 
+    /**
+     * --- LOGIKA QRIS PRIBADI ---
+     */
+
+    // Buka Modal QRIS
+    public function openQris()
+    {
+        if ($this->selectedOrder) {
+            $this->isQrisModalOpen = true;
+        }
+    }
+
+    // Tutup Modal QRIS
+    public function closeQris()
+    {
+        $this->isQrisModalOpen = false;
+    }
+
+    // Konfirmasi Pembayaran QRIS (Manual Check)
+    public function markAsQrisPaid()
+    {
+        if ($this->selectedOrder) {
+            // Set nominal bayar pas sesuai tagihan (karena transfer pasti pas)
+            $this->paymentAmount = $this->grandTotal;
+
+            // Panggil fungsi bayar utama
+            $this->markAsPaid();
+
+            // Tutup modal QRIS
+            $this->closeQris();
+        }
+    }
+
     public function render()
     {
         // Tampilkan pesanan yang statusnya 'served' (siap bayar) atau 'paid' (riwayat hari ini)
-        // Filter agar kasir fokus pada yang harus dibayar
         $orders = Order::with('table')
             ->whereIn('status', ['served', 'paid', 'completed'])
             ->latest() // Urutkan dari yang terbaru

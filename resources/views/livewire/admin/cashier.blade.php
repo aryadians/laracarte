@@ -146,15 +146,63 @@
                             </div>
                         </div>
 
-                        <button wire:click="markAsPaid" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-500/30 transition-all active:scale-95 mt-auto">
-                            Proses Pembayaran
-                        </button>
+                        <div class="space-y-3 mt-auto pt-4">
+                            <button wire:click="markAsPaid" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-500/30 transition-all active:scale-95 flex justify-center items-center gap-2">
+                                <span>💵</span> Bayar Tunai
+                            </button>
+
+                            <div class="relative flex py-1 items-center">
+                                <div class="flex-grow border-t border-gray-200"></div>
+                                <span class="flex-shrink-0 mx-4 text-gray-400 text-xs uppercase font-bold">Atau</span>
+                                <div class="flex-grow border-t border-gray-200"></div>
+                            </div>
+
+                            <button wire:click="openQris" class="w-full bg-white border-2 border-slate-200 text-slate-700 py-3 rounded-xl font-bold hover:bg-slate-50 hover:border-indigo-500 hover:text-indigo-600 transition-all active:scale-95 flex justify-center items-center gap-2">
+                                <span>📱</span> Tampilkan QRIS
+                            </button>
+                        </div>
                     @endif
                 </div>
             </div>
         </div>
     </div>
+    @endif
 
+    @if($isQrisModalOpen)
+    <div class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-zoom-in relative">
+            
+            <button wire:click="closeQris" class="absolute top-4 right-4 bg-slate-100 rounded-full p-2 text-slate-500 hover:bg-red-100 hover:text-red-500 transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+
+            <div class="p-8 text-center">
+                <h3 class="text-xl font-black text-slate-800 mb-1">Scan QRIS</h3>
+                <p class="text-sm text-slate-500 mb-6">Scan menggunakan GoPay, OVO, Dana, atau Mobile Banking.</p>
+                
+                <div class="bg-white p-2 border-2 border-slate-800 rounded-2xl inline-block mb-4 shadow-lg">
+                    <img src="{{ asset('qris.jpg') }}" class="w-48 h-48 object-contain" alt="QRIS Code">
+                </div>
+
+                <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-3 mb-6">
+                    <p class="text-xs font-bold text-yellow-700 uppercase">Total Tagihan:</p>
+                    <p class="text-2xl font-black text-slate-800">Rp {{ number_format($grandTotal, 0, ',', '.') }}</p>
+                </div>
+
+                <div class="space-y-3">
+                    <button wire:click="markAsQrisPaid" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 shadow-lg shadow-green-500/30 transition-all active:scale-95 flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        Pembayaran Diterima
+                    </button>
+                    
+                    <p class="text-xs text-slate-400">Pastikan uang sudah masuk ke rekening sebelum konfirmasi.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    @if($selectedOrder) 
     <div id="receipt-area" class="hidden">
         <div class="receipt-content">
             <div class="text-center">
