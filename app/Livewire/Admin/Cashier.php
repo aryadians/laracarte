@@ -14,59 +14,109 @@ class Cashier extends Component
     public $paymentAmount = 0;    // Input uang dari kasir
     public $changeAmount = 0;     // Kembalian
 
-    // Buka Modal Detail / Bayar
+    // Variabel untuk Rincian Harga (Pajak & Service)
+    public $subtotal = 0;
+    public $tax = 0;          // PPN 11%
+    public $service = 0;      // Service Charge 5%
+    public $grandTotal = 0;   // Total Akhir yang harus dibayar
+
+    protected $rules = [
+        'paymentAmount' => 'required|numeric|min:0',
+    ];
+
+    /**
+     * Buka Modal Detail & Hitung Pajak Otomatis
+     */
     public function openDetail($orderId)
     {
         $this->selectedOrder = Order::with(['items.product', 'table'])->find($orderId);
-        $this->paymentAmount = 0; 
-        $this->changeAmount = 0;
-    }
 
-    // Tutup Modal
-    public function closeDetail()
-    {
-        $this->selectedOrder = null;
-    }
-
-    // Hitung Kembalian Real-time saat mengetik
-    public function updatedPaymentAmount()
-    {
         if ($this->selectedOrder) {
-            $pay = (int) $this->paymentAmount;
-            $total = $this->selectedOrder->total_price;
-            $this->changeAmount = $pay - $total;
+            // 1. Hitung Subtotal (Harga Menu x Jumlah)
+            $this->subtotal = $this->selectedOrder->items->sum(function ($item) {
+                return $item->price * $item->quantity;
+            });
+
+            // 2. Hitung Service Charge 5% (Opsional, sesuaikan kebijakan restoran)
+            $this->service = ceil($this->subtotal * 0.05);
+
+            // 3. Hitung PPN 11% (Dari Subtotal + Service)
+            $this->tax = ceil(($this->subtotal + $this->service) * 0.11);
+
+            // 4. Hitung Grand Total (Total Akhir)
+            $this->grandTotal = $this->subtotal + $this->service + $this->tax;
+
+            // Reset input pembayaran
+            $this->paymentAmount = 0;
+            $this->changeAmount = 0;
         }
     }
 
-    // Proses Pembayaran (Tandai Lunas)
+    /**
+     * Tutup Modal & Reset Data
+     */
+    public function closeDetail()
+    {
+        $this->selectedOrder = null;
+        $this->reset(['paymentAmount', 'changeAmount', 'subtotal', 'tax', 'service', 'grandTotal']);
+    }
+
+    /**
+     * Hitung Kembalian Real-time saat mengetik nominal pembayaran
+     */
+    public function updatedPaymentAmount()
+    {
+        // Hitung kembalian berdasarkan Grand Total (bukan total_price lama)
+        if (is_numeric($this->paymentAmount)) {
+            $this->changeAmount = (int)$this->paymentAmount - (int)$this->grandTotal;
+        }
+    }
+
+    /**
+     * Proses Pembayaran (Tandai Lunas & Potong Stok)
+     */
     public function markAsPaid()
     {
         if (!$this->selectedOrder) return;
 
-        // Validasi pembayaran kurang
-        if ($this->paymentAmount < $this->selectedOrder->total_price) {
+        $this->validate();
+
+        // Validasi jika uang kurang
+        if ($this->paymentAmount < $this->grandTotal) {
             $this->addError('paymentAmount', 'Uang pembayaran kurang!');
             return;
         }
 
-        // Update Status jadi Paid
+        // Update Data Pesanan
         $this->selectedOrder->update([
             'status' => 'paid',
+            'subtotal' => $this->subtotal,
+            'tax_amount' => $this->tax,
+            'service_charge' => $this->service,
+            'total_price' => $this->grandTotal, // Simpan total yang sudah kena pajak
             'updated_at' => now(),
         ]);
 
-        session()->flash('success', 'Pembayaran berhasil! Silakan cetak struk.');
+        // POTONG STOK OTOMATIS
+        // (Memanggil fungsi reduceStock yang ada di Model Order)
+        $this->selectedOrder->reduceStock();
+
+        session()->flash('success', 'Pembayaran berhasil! Stok telah dikurangi.');
+
+        // Jangan close detail agar kasir bisa langsung cetak struk
     }
 
     public function render()
     {
-        // Ambil data pesanan, urutkan dari yang terbaru
+        // Tampilkan pesanan yang statusnya 'served' (siap bayar) atau 'paid' (riwayat hari ini)
+        // Filter agar kasir fokus pada yang harus dibayar
         $orders = Order::with('table')
-            ->latest()
+            ->whereIn('status', ['served', 'paid', 'completed'])
+            ->latest() // Urutkan dari yang terbaru
             ->paginate(10);
 
         return view('livewire.admin.cashier', [
             'orders' => $orders
-        ])->layout('components.admin-layout'); // Sesuaikan dengan layout admin kamu
+        ])->layout('components.admin-layout', ['header' => 'Halaman Kasir (POS)']);
     }
 }

@@ -1,7 +1,7 @@
 <div class="p-6"> <div class="flex justify-between items-center mb-6">
         <div>
             <h2 class="text-2xl font-black text-slate-800">Halaman Kasir (POS)</h2>
-            <p class="text-slate-500 text-sm">Kelola pembayaran dan cetak struk.</p>
+            <p class="text-slate-500 text-sm">Kelola pembayaran dan cetak struk dengan Pajak & Service.</p>
         </div>
         
         <div wire:poll.10s class="text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full flex items-center gap-2 border border-green-100">
@@ -30,7 +30,6 @@
                 @forelse($orders as $order)
                 <tr class="hover:bg-slate-50 transition-colors">
                     <td class="px-6 py-4 font-mono text-xs">#{{ $order->id }}</td>
-                    {{-- FIX TIMEZONE: Paksa ke Asia/Jakarta --}}
                     <td class="px-6 py-4">{{ $order->created_at->setTimezone('Asia/Jakarta')->format('H:i') }}</td>
                     <td class="px-6 py-4 font-bold">{{ $order->table->name ?? 'Takeaway' }}</td>
                     <td class="px-6 py-4">{{ $order->customer_name }}</td>
@@ -38,14 +37,10 @@
                     <td class="px-6 py-4 text-center">
                         <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase
                             {{ $order->status == 'paid' ? 'bg-green-100 text-green-700' : '' }}
-                            {{ $order->status == 'pending' ? 'bg-red-100 text-red-700' : '' }}
-                            {{ $order->status == 'cooking' ? 'bg-orange-100 text-orange-700' : '' }}
                             {{ $order->status == 'served' ? 'bg-blue-100 text-blue-700' : '' }} 
                             {{ $order->status == 'completed' ? 'bg-gray-100 text-gray-700' : '' }}">
                             
-                            @if($order->status == 'pending') Menunggu
-                            @elseif($order->status == 'cooking') Dimasak
-                            @elseif($order->status == 'served') Disajikan
+                            @if($order->status == 'served') Siap Bayar
                             @elseif($order->status == 'paid') Lunas
                             @elseif($order->status == 'completed') Selesai
                             @else {{ $order->status }}
@@ -60,7 +55,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="px-6 py-12 text-center text-slate-400">Belum ada pesanan masuk.</td>
+                    <td colspan="7" class="px-6 py-12 text-center text-slate-400">Belum ada pesanan yang perlu dibayar.</td>
                 </tr>
                 @endforelse
             </tbody>
@@ -76,8 +71,8 @@
             
             <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                 <div>
-                    <h3 class="text-xl font-black text-slate-800">Kasir: Order #{{ $selectedOrder->id }}</h3>
-                    <p class="text-sm text-slate-500">{{ $selectedOrder->customer_name }} - {{ $selectedOrder->table->name }}</p>
+                    <h3 class="text-xl font-black text-slate-800">Order #{{ $selectedOrder->id }}</h3>
+                    <p class="text-sm text-slate-500">{{ $selectedOrder->customer_name }} - {{ $selectedOrder->table->name ?? 'Takeaway' }}</p>
                 </div>
                 <button wire:click="closeDetail" class="w-8 h-8 flex items-center justify-center bg-white rounded-full text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -87,30 +82,39 @@
             <div class="p-6 overflow-y-auto flex-1 grid grid-cols-1 md:grid-cols-2 gap-8">
                 
                 <div>
-                    <h4 class="font-bold text-slate-700 mb-4 uppercase text-xs tracking-wider">Rincian Item</h4>
-                    <div class="space-y-3 border-b border-slate-100 pb-4 mb-4">
+                    <h4 class="font-bold text-slate-700 mb-4 uppercase text-xs tracking-wider">Rincian Pesanan</h4>
+                    
+                    <div class="space-y-3 pb-4 mb-2">
                         @foreach($selectedOrder->items as $item)
-                        <div class="flex justify-between items-start">
+                        <div class="flex justify-between items-start text-sm">
                             <div>
-                                <p class="font-bold text-slate-800 text-sm">{{ $item->product->name }}</p>
+                                <p class="font-bold text-slate-800">{{ $item->product->name }}</p>
                                 <p class="text-xs text-slate-400">{{ $item->quantity }}x @ Rp {{ number_format($item->price, 0, ',', '.') }}</p>
                             </div>
-                            <p class="font-bold text-slate-800 text-sm">Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}</p>
+                            <p class="font-bold text-slate-800">Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}</p>
                         </div>
                         @endforeach
                     </div>
                     
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-slate-500">Total Tagihan</span>
-                        <span class="font-black text-2xl text-indigo-600">Rp {{ number_format($selectedOrder->total_price, 0, ',', '.') }}</span>
+                    <div class="border-t border-dashed border-slate-200 pt-4 space-y-2 text-sm text-slate-600">
+                        <div class="flex justify-between">
+                            <span>Subtotal</span>
+                            <span class="font-medium">Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span>Service Charge (5%)</span>
+                            <span>Rp {{ number_format($service, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span>PB1 / PPN (11%)</span>
+                            <span>Rp {{ number_format($tax, 0, ',', '.') }}</span>
+                        </div>
                     </div>
 
-                    @if($selectedOrder->note)
-                    <div class="mt-4 bg-yellow-50 p-3 rounded-xl border border-yellow-100">
-                        <p class="text-xs font-bold text-yellow-600 uppercase mb-1">Catatan:</p>
-                        <p class="text-sm text-yellow-800 italic">"{{ $selectedOrder->note }}"</p>
+                    <div class="flex justify-between items-center mt-4 pt-4 border-t border-slate-200">
+                        <span class="font-bold text-slate-800">Grand Total</span>
+                        <span class="font-black text-2xl text-indigo-600">Rp {{ number_format($grandTotal, 0, ',', '.') }}</span>
                     </div>
-                    @endif
                 </div>
 
                 <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 flex flex-col justify-between h-full">
@@ -125,7 +129,7 @@
                             
                             <button onclick="printReceipt()" class="w-full bg-slate-800 text-white py-3 rounded-xl font-bold hover:bg-slate-900 flex items-center justify-center gap-2 shadow-lg">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                                Cetak Struk (Thermal)
+                                Cetak Struk
                             </button>
                         </div>
                     @else
@@ -143,7 +147,7 @@
                         </div>
 
                         <button wire:click="markAsPaid" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-500/30 transition-all active:scale-95 mt-auto">
-                            Terima Pembayaran
+                            Proses Pembayaran
                         </button>
                     @endif
                 </div>
@@ -155,33 +159,17 @@
         <div class="receipt-content">
             <div class="text-center">
                 <h2 class="font-bold text-xl uppercase">LaraCarte Resto</h2>
-                <p class="text-[10px] leading-tight mt-1">Jl. Teknologi No. 1, Jakarta Selatan</p>
+                <p class="text-[10px] leading-tight mt-1">Jl. Teknologi No. 1, Jakarta</p>
                 <p class="text-[10px]">Telp: 0812-3456-7890</p>
             </div>
             
             <div class="dashed-line my-2"></div>
 
             <div class="text-[10px] space-y-0.5">
-                <div class="flex justify-between">
-                    <span>No. Order</span>
-                    <span class="font-bold">#{{ $selectedOrder->id }}</span>
-                </div>
-                <div class="flex justify-between">
-                    <span>Tanggal</span>
-                    <span>{{ $selectedOrder->created_at->setTimezone('Asia/Jakarta')->format('d/m/Y H:i') }}</span>
-                </div>
-                <div class="flex justify-between">
-                    <span>Pelanggan</span>
-                    <span>{{ substr($selectedOrder->customer_name, 0, 15) }}</span>
-                </div>
-                <div class="flex justify-between">
-                    <span>Meja</span>
-                    <span>{{ $selectedOrder->table->name }}</span>
-                </div>
-                <div class="flex justify-between">
-                    <span>Kasir</span>
-                    <span>{{ Auth::user()->name ?? 'Admin' }}</span>
-                </div>
+                <div class="flex justify-between"><span>No. Order</span><span class="font-bold">#{{ $selectedOrder->id }}</span></div>
+                <div class="flex justify-between"><span>Tgl</span><span>{{ $selectedOrder->created_at->setTimezone('Asia/Jakarta')->format('d/m/Y H:i') }}</span></div>
+                <div class="flex justify-between"><span>Meja</span><span>{{ $selectedOrder->table->name ?? 'Takeaway' }}</span></div>
+                <div class="flex justify-between"><span>Kasir</span><span>{{ Auth::user()->name ?? 'Admin' }}</span></div>
             </div>
 
             <div class="dashed-line my-2"></div>
@@ -200,25 +188,33 @@
 
             <div class="dashed-line my-2"></div>
 
+            <div class="text-[10px] space-y-0.5 text-right">
+                <div class="flex justify-between"><span>Subtotal</span><span>{{ number_format($subtotal, 0, ',', '.') }}</span></div>
+                <div class="flex justify-between"><span>Service (5%)</span><span>{{ number_format($service, 0, ',', '.') }}</span></div>
+                <div class="flex justify-between"><span>PB1 (11%)</span><span>{{ number_format($tax, 0, ',', '.') }}</span></div>
+            </div>
+
+            <div class="dashed-line my-2"></div>
+
             <div class="text-xs font-bold space-y-1">
                 <div class="flex justify-between text-sm">
                     <span>TOTAL</span>
-                    <span>Rp {{ number_format($selectedOrder->total_price, 0, ',', '.') }}</span>
+                    <span>Rp {{ number_format($grandTotal, 0, ',', '.') }}</span>
                 </div>
-                <div class="flex justify-between font-normal">
+                <div class="flex justify-between font-normal text-[10px]">
                     <span>Tunai</span>
-                    <span>Rp {{ number_format((int)$paymentAmount, 0, ',', '.') }}</span>
+                    <span>{{ number_format((int)$paymentAmount, 0, ',', '.') }}</span>
                 </div>
-                <div class="flex justify-between font-normal">
+                <div class="flex justify-between font-normal text-[10px]">
                     <span>Kembali</span>
-                    <span>Rp {{ number_format((int)$changeAmount, 0, ',', '.') }}</span>
+                    <span>{{ number_format((int)$changeAmount, 0, ',', '.') }}</span>
                 </div>
             </div>
 
             <div class="dashed-line my-4"></div>
             <div class="text-center text-[10px]">
                 <p class="font-bold">TERIMA KASIH</p>
-                <p>Silakan Datang Kembali!</p>
+                <p>Harga sudah termasuk PPN</p>
                 <p class="mt-1">Wifi: LaraCarte_Free</p>
             </div>
         </div>
@@ -227,52 +223,26 @@
 
     <script>
         function printReceipt() {
-            window.print();
+            var content = document.getElementById('receipt-area').innerHTML;
+            
+            // Buat Iframe
+            var iframe = document.createElement('iframe');
+            iframe.style.position = 'fixed';
+            iframe.style.right = '0';
+            iframe.style.bottom = '0';
+            iframe.style.width = '0';
+            iframe.style.height = '0';
+            iframe.style.border = '0';
+            document.body.appendChild(iframe);
+            
+            // Isi Konten Iframe & Print
+            var doc = iframe.contentWindow.document;
+            doc.open();
+            doc.write('<html><head><style>body{font-family:monospace;width:58mm;font-size:10pt;margin:0;padding:5px;}.dashed-line{border-top:1px dashed #000;width:100%;margin:5px 0;}.text-center{text-align:center}.flex{display:flex;justify-content:space-between}.font-bold{font-weight:bold}.text-right{text-align:right}.mb-1{margin-bottom:2px}.space-y-0.5 > * + * {margin-top: 2px;} .space-y-1 > * + * {margin-top: 4px;}</style></head><body onload="window.print();window.close();">' + content + '</body></html>');
+            doc.close();
+            
+            // Hapus Iframe setelah 1 detik
+            setTimeout(function() { document.body.removeChild(iframe); }, 1000);
         }
     </script>
-
-    <style>
-    /* Style Khusus Garis Putus-putus */
-    .dashed-line {
-        border-top: 1px dashed #000;
-        width: 100%;
-        height: 1px;
-    }
-
-    @media print {
-        /* Sembunyikan elemen website lain */
-        body * {
-            visibility: hidden;
-            height: 0;
-            overflow: hidden;
-        }
-
-        /* Tampilkan Area Struk */
-        #receipt-area, #receipt-area * {
-            display: block !important; 
-            visibility: visible;
-            height: auto;
-        }
-
-        #receipt-area {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 58mm; /* Lebar Kertas Thermal 58mm */
-            padding: 2mm; 
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace; /* Font Monospace agar rapi */
-            font-size: 10pt;
-            background: white;
-            color: black;
-            line-height: 1.2;
-        }
-
-        /* Hapus margin default browser saat print */
-        @page { 
-            margin: 0; 
-            size: auto; 
-        }
-    }
-    </style>
-
 </div>

@@ -7,55 +7,65 @@ use App\Models\Order;
 
 class OrderManager extends Component
 {
-    // Agar halaman otomatis refresh setiap 10 detik untuk cek order baru
+    // Agar halaman otomatis refresh jika ada event broadcast (Opsional)
+    // Jika tidak pakai Pusher/Echo, pastikan di blade ada wire:poll
     protected $listeners = ['echo:orders,OrderCreated' => '$refresh'];
 
-    // Update status jadi SEDANG DIMASAK (Opsional, jika ingin ada proses ini)
+    /**
+     * Update status: PENDING -> COOKING
+     * Menandakan koki mulai memasak pesanan ini.
+     */
     public function markAsCooking($orderId)
     {
         $order = Order::find($orderId);
+
+        // Hanya bisa dimasak jika status awalnya 'pending'
         if ($order && $order->status == 'pending') {
             $order->update(['status' => 'cooking']);
-            session()->flash('message', 'Pesanan Meja ' . $order->table->name . ' sedang dimasak.');
+            session()->flash('message', 'Pesanan Meja ' . ($order->table->name ?? 'Takeaway') . ' sedang dimasak.');
         }
     }
 
-    // FIX: Tombol "Siap Saji" / "Selesai Masak"
-    // Mengubah status menjadi 'served' (Disajikan), AGAR KASIR BISA BAYAR
+    /**
+     * Update status: COOKING -> SERVED (SIAP SAJI)
+     * Menandakan makanan sudah jadi dan siap diantar.
+     * PENTING: Stok berkurang di tahap ini.
+     */
     public function markAsServed($orderId)
     {
         $order = Order::find($orderId);
+
         if ($order) {
-            // Ubah ke 'served' (Artinya makanan sudah diantar ke meja)
-            // Kasir akan melihat ini sebagai pesanan yang belum dibayar
+            // 1. Ubah status ke 'served'
             $order->update(['status' => 'served']);
 
-            session()->flash('message', 'Pesanan Meja ' . $order->table->name . ' siap disajikan!');
+            // 2. POTONG STOK OTOMATIS
+            // Memanggil fungsi yang sudah kita buat di Model Order
+            $order->reduceStock();
+
+            session()->flash('message', 'Pesanan Meja ' . ($order->table->name ?? 'Takeaway') . ' siap disajikan & Stok dikurangi!');
         }
     }
 
-    // (Opsional) Jika Admin Dapur juga bisa terima pembayaran
-    public function markAsPaid($orderId)
-    {
-        $order = Order::find($orderId);
-        if ($order) {
-            $order->update(['status' => 'paid']);
-            session()->flash('message', 'Pesanan Meja ' . $order->table->name . ' sudah dibayar.');
-        }
-    }
-
+    /**
+     * (Opsional) Hapus Pesanan (Misal salah input / cancel)
+     */
     public function deleteOrder($orderId)
     {
         $order = Order::find($orderId);
         if ($order) {
+            // Jika statusnya belum paid/completed, kembalikan stok (opsional, tergantung kebijakan)
+            // Tapi untuk MVP, kita delete saja.
             $order->delete();
+            session()->flash('message', 'Pesanan berhasil dihapus.');
         }
     }
 
     public function render()
     {
-        // Ambil pesanan Aktif (Pending, Cooking, Served)
-        // Hilangkan yang sudah 'paid' atau 'completed' agar dapur bersih
+        // Ambil pesanan Aktif untuk tampilan Dapur
+        // Kita hanya ambil status: Pending (Baru) & Cooking (Dimasak)
+        // Status 'served' biasanya sudah hilang dari layar koki, tapi jika ingin tetap ditampilkan, biarkan array-nya.
         $orders = Order::with(['table', 'items.product'])
             ->whereIn('status', ['pending', 'cooking', 'served'])
             ->orderBy('created_at', 'asc') // Urutkan dari yang paling lama antri (FIFO)
@@ -63,6 +73,6 @@ class OrderManager extends Component
 
         return view('livewire.admin.order-manager', [
             'orders' => $orders
-        ])->layout('components.admin-layout', ['header' => 'Kitchen & Orders']);
+        ])->layout('components.admin-layout', ['header' => 'Kitchen Display System (KDS)']);
     }
 }
