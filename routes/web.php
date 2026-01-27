@@ -8,6 +8,7 @@ use App\Livewire\Admin\OrderManager;
 use App\Livewire\Admin\TransactionHistory;
 use App\Livewire\Front\OrderPage;
 use App\Livewire\Admin\Cashier;
+use App\Livewire\Admin\Reports;
 
 
 /*
@@ -49,6 +50,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/orders', OrderManager::class)->name('admin.orders');
     Route::get('/history', TransactionHistory::class)->name('admin.history');
     Route::get('/admin/cashier', Cashier::class)->name('admin.cashier');
+    Route::get('/admin/reports', Reports::class)->name('admin.reports');
 });
 
 // Memuat file auth bawaan (Login, Register, Reset Password, dll)
