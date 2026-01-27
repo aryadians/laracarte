@@ -2,103 +2,97 @@
   <img src="https://api.iconify.design/mdi/silverware-fork-knife.svg?color=%234f46e5&width=120&height=120" alt="LaraCarte Logo">
 </p>
 
-<h1 align="center">LaraCarte - Restaurant Management System</h1>
+<h1 align="center">LaraCarte</h1>
 
 <p align="center">
-  A modern and intuitive restaurant management system built with the TALL stack.
+  Modern, Real-Time Restaurant & Cafe Point of Sale (POS) System.
+  <br>
+  Built with the <strong>TALL Stack</strong>: Tailwind, Alpine.js, Laravel, and Livewire.
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/PHP-8.2-777BB4.svg?style=for-the-badge&logo=php" alt="PHP 8.2">
-  <img src="https://img.shields.io/badge/Laravel-12-FF2D20.svg?style=for-the-badge&logo=laravel" alt="Laravel 12">
-  <img src="https://img.shields.io/badge/Livewire-3-4d55d2.svg?style=for-the-badge&logo=livewire" alt="Livewire 3">
-  <img src="https://img.shields.io/badge/Volt-1.7-8b5cf6.svg?style=for-the-badge" alt="Volt">
-  <img src="https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css" alt="Tailwind CSS">
-  <img src="https://img.shields.io/badge/Alpine.js-3.x-8BC0D0?style=for-the-badge&logo=alpine.js" alt="Alpine.js">
-</p>
-<p align="center">
-  <img src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" alt="License">
+  <img src="https://img.shields.io/badge/PHP-8.2+-777BB4.svg?style=for-the-badge&logo=php" alt="PHP 8.2+">
+  <img src="https://img.shields.io/badge/Laravel-11.x-FF2D20.svg?style=for-the-badge&logo=laravel" alt="Laravel 11.x">
+  <img src="https://img.shields.io/badge/Livewire-3.x-4d55d2.svg?style=for-the-badge&logo=livewire" alt="Livewire 3">
+  <img src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" alt="License MIT">
 </p>
 
 ---
 
-## 🚀 About LaraCarte
+**LaraCarte** adalah sistem manajemen restoran dan kafe yang intuitif dan *real-time*. Didesain untuk menyederhanakan operasional, mulai dari manajemen menu, pesanan pelanggan, hingga proses pembayaran di kasir. Pelanggan dapat dengan mudah memesan melalui QR code di meja mereka, dan semua pesanan akan langsung tampil di dasbor admin secara instan.
 
-LaraCarte is a powerful and easy-to-use restaurant management system designed to streamline your restaurant's operations. Built with the latest web technologies, it provides a seamless experience for managing your products, tables, and orders.
+## ✨ Fitur Utama
 
-## ✨ Key Features
+### 🤵 Panel Admin
+- 📈 **Dasbor Interaktif**: Pantau penjualan, pesanan masuk, dan produk terlaris secara *real-time*.
+- 📦 **Manajemen Produk**: Atur menu, kategori, dan ketersediaan stok dengan mudah.
+- 🍽️ **Manajemen Meja**: Kelola status meja (tersedia, terisi) untuk efisiensi layanan.
+- 🛒 **Manajemen Pesanan**: Lihat dan kelola status pesanan (pending, dimasak, selesai) dalam satu layar.
+- 💰 **Antarmuka Kasir**: Proses pembayaran dari pelanggan dengan cepat dan efisien.
+- 📜 **Riwayat Transaksi**: Catat dan lihat semua transaksi yang telah selesai untuk keperluan akuntansi.
+- 🔔 **Notifikasi Real-Time**: Dapatkan pemberitahuan instan untuk pesanan baru atau panggilan pelayan.
 
-| Feature | Description |
-| --- | --- |
-| 📦 **Product Management** | Add, edit, and categorize your menu items with ease, including stock management. |
-| 🍽️ **Table Management** | Visually organize your restaurant's floor plan and manage table status (available, occupied). |
-| 📱 **Customer Ordering** | A QR-code based menu where customers can browse and place orders directly from their table. |
-| 🛒 **Admin Order Management** | A real-time dashboard for admins to view incoming orders, update their status (pending, cooking, done), and manage the entire order flow. |
-| 🤵 **Waitress Call System** | Allows customers to request a waitress to their table with the click of a button. |
-| 🔔 **Real-time Notifications** | Instant notifications for new orders and waitress calls to keep the staff informed. |
-| 💵 **Cashier Interface** | A dedicated interface for viewing bills, processing payments, and completing orders. |
-| 📜 **Transaction History** | A comprehensive log of all past orders and transactions for accounting and analysis. |
-| 📈 **Insightful Dashboard** | Get real-time insights into sales, popular products, and overall restaurant performance. |
-| 🔒 **Secure Auth** | Role-based access control for administrators, cashiers, and staff. |
-| 🎨 **Modern & Responsive UI**| A stunning and intuitive UI built with Tailwind CSS and Alpine.js that works on any device. |
+### 📱 Sisi Pelanggan
+- 🤳 **Pemesanan via QR Code**: Pelanggan memindai QR code di meja untuk melihat menu dan memesan.
+- 🛍️ **Keranjang Belanja Dinamis**: Pelanggan dapat menambah atau mengubah pesanan mereka secara langsung.
+- 🙋 **Panggil Pelayan**: Tombol khusus bagi pelanggan untuk memanggil pelayan ke meja mereka.
 
-## 📸 Screenshots
+## 🛠️ Teknologi yang Digunakan
 
-*(Add some screenshots of your application here)*
+| Kategori | Teknologi |
+| :--- | :--- |
+| **Framework** | 🚀 Laravel 11 |
+| **UI/Frontend** | ⚡ Livewire 3, 🍃 Alpine.js, 💨 Tailwind CSS |
+| **Database** | 🗄️ MySQL (default), PostgreSQL, SQLite |
+| **Server-side** | 🐘 PHP 8.2+ |
+| **Dev Tools** | 🎨 Vite, 📦 Composer, 📮 NPM |
 
-![Screenshot 1](https://via.placeholder.com/800x450.png?text=LaraCarte+Dashboard)
-![Screenshot 2](https://via.placeholder.com/800x450.png?text=Order+Management)
+## 🏁 Instalasi & Setup
 
-## 🛠️ Tech Stack
+Ikuti langkah-langkah berikut untuk menjalankan proyek ini di lingkungan lokal Anda.
 
--   **Backend:** [Laravel](https://laravel.com/), [PHP](https://www.php.net/)
--   **Frontend:** [Livewire](https://livewire.laravel.com/), [Volt](https://volt.laravel.com/), [Tailwind CSS](https://tailwindcss.com/), [Alpine.js](https://alpinejs.dev/)
--   **Database:** MySQL / PostgreSQL / SQLite (configurable)
-
-## 🏁 Getting Started
-
-Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
-
-### Prerequisites
-
--   PHP >= 8.2
--   Composer
--   Node.js & NPM
--   A web server (like Nginx or Apache) or use the built-in Laravel server.
-
-### Installation
-
-1.  **Clone the repository**
+1.  **Clone Repository**
     ```sh
-    git clone https://github.com/aryadians/laracarte.git
+    git clone https://github.com/your-username/laracarte.git
     cd laracarte
     ```
 
-2.  **Install dependencies**
-    Run the setup script to install all PHP and JS dependencies, create your `.env` file, and generate the application key.
+2.  **Install Dependencies**
     ```sh
-    composer run-script setup
+    composer install
+    npm install
     ```
 
-3.  **Run Migrations**
-    Set up your database in the `.env` file, then run the migrations and seed the database with initial data.
+3.  **Setup Environment**
+    Salin file `.env.example` dan buat kunci aplikasi.
+    ```sh
+    cp .env.example .env
+    php artisan key:generate
+    ```
+
+4.  **Konfigurasi Database**
+    Buka file `.env` dan sesuaikan pengaturan database Anda (`DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`).
+
+5.  **Jalankan Migrasi & Seeder**
+    Perintah ini akan membuat struktur tabel dan mengisi data awal (termasuk akun admin).
     ```sh
     php artisan migrate --seed
     ```
 
-4.  **Start the development server**
-    This will start the PHP server, queue worker, and Vite dev server.
+6.  **Jalankan Server**
     ```sh
-    composer run-script dev
+    npm run dev
+    php artisan serve
     ```
 
-5.  You can now access the application at `http://127.0.0.1:8000`.
-    -   **Admin Email:** `admin@laracarte.com`
-    -   **Password:** `password`
+7.  **Selesai!**
+    Aplikasi Anda sekarang berjalan di `http://127.0.0.1:8000`.
+    -   **Admin Email**: `admin@laracarte.com`
+    -   **Password**: `password`
 
-## 🤝 Contributing
+## 🤝 Berkontribusi
 
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+Kontribusi Anda sangat kami hargai! Jika Anda ingin berkontribusi, silakan fork proyek ini dan buat *pull request*.
 
 1.  Fork the Project
 2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -106,6 +100,6 @@ Contributions are what make the open-source community such an amazing place to l
 4.  Push to the Branch (`git push origin feature/AmazingFeature`)
 5.  Open a Pull Request
 
-## 📄 License
+## 📄 Lisensi
 
-Distributed under the MIT License.
+Didistribusikan di bawah Lisensi MIT. Lihat `LICENSE` untuk informasi lebih lanjut.
