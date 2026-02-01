@@ -1,4 +1,4 @@
-<div wire:poll.5s class="p-6"> <div class="flex justify-between items-center mb-6">
+<div x-on:echo:kitchen,OrderCreated="$wire.$refresh()" class="p-6"> <div class="flex justify-between items-center mb-6">
         <div>
             <h1 class="text-3xl font-black text-slate-800 tracking-tight">Dapur & Pesanan</h1>
             <p class="text-slate-500 text-lg">Pantau antrian pesanan yang masuk.</p>

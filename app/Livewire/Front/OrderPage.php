@@ -195,10 +195,19 @@ class OrderPage extends Component
                             'price' => $product->price
                         ]);
 
+use App\Events\OrderCreated;
+
+// ... (existing imports)
+
+// ...
+
                         // Kurangi stok sekarang (Reservasi stok)
                         $product->decrement('stock', $qty);
                     }
                 }
+
+                // 2b. Broadcast ke Kitchen
+                OrderCreated::dispatch($order);
             });
 
             // 3. Reset Cart & UI
