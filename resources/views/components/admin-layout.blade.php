@@ -113,6 +113,11 @@
                         <span class="font-bold text-sm">Dapur (KDS)</span>
                     </a>
 
+                    <a wire:navigate href="{{ route('admin.expo') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 group {{ request()->routeIs('admin.expo') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
+                        <svg class="w-5 h-5 {{ request()->routeIs('admin.expo') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                        <span class="font-bold text-sm">Expo / Runner</span>
+                    </a>
+
                     <a wire:navigate href="{{ route('admin.cashier') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 group {{ request()->routeIs('admin.cashier') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.cashier') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2-2v14a2 2 0 002 2z"></path>

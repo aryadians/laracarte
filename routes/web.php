@@ -57,11 +57,16 @@ Route::middleware('auth')->group(function () {
     // Manual Logout (Safety)
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
+use App\Livewire\Admin\Expo;
+
+// ...
+
     // Admin Panel Group
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/products', ProductManager::class)->name('products');
         Route::get('/ingredients', IngredientManager::class)->name('ingredients');
         Route::get('/kitchen', OrderManager::class)->name('kitchen');
+        Route::get('/expo', Expo::class)->name('expo');
         Route::get('/tables', TableManager::class)->name('tables');
         Route::get('/cashier', Cashier::class)->name('cashier');
         Route::get('/history', OrderHistory::class)->name('history');
