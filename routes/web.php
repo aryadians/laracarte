@@ -2,14 +2,17 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Livewire\Admin\ProductManager; // Import Livewire Component
+use App\Livewire\Admin\ProductManager;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\OrderManager;
+use App\Livewire\Admin\OrderHistory;
 use App\Livewire\Admin\TransactionHistory;
-use App\Livewire\Front\OrderPage;
+use App\Livewire\Admin\TableManager;
 use App\Livewire\Admin\Cashier;
 use App\Livewire\Admin\Reports;
-
+use App\Livewire\Admin\Dashboard;
+use App\Livewire\Front\OrderIndex;
+use App\Livewire\Front\OrderPage;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,49 +20,44 @@ use App\Livewire\Admin\Reports;
 |--------------------------------------------------------------------------
 */
 
+// Public Routes
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// Route Dashboard
-// Route Dashboard (GANTI BARIS INI)
-Route::get('/dashboard', \App\Livewire\Admin\Dashboard::class)
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+// Customer Routes (Scan QR)
+Route::get('/order/{slug}', OrderIndex::class)->name('order.index');
+Route::get('/table/{slug}', OrderPage::class)->name('front.order');
 
-// Group Auth Middleware (Hanya bisa diakses jika sudah login)
+// Auth Routes (Login, Register, etc.)
+if (file_exists(__DIR__ . '/auth.php')) {
+    require __DIR__ . '/auth.php';
+}
+
+// Authenticated Routes
 Route::middleware('auth')->group(function () {
+    
+    // Dashboard
+    Route::get('/dashboard', Dashboard::class)
+        ->middleware(['verified'])
+        ->name('dashboard');
 
-    // 1. FIX ERROR PROFILE
-    // Error "Route [profile] not defined" terjadi karena layout mencari route bernama 'profile'.
-    // Jadi, kita ubah nama 'profile.edit' menjadi 'profile'.
+    // Profile Management
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // 2. RUTE PRODUK MANAGER (Livewire)
-    Route::get('/products', ProductManager::class)->name('products');
-
-    // 3. FIX ERROR LOGOUT
-    // Mendefinisikan manual rute logout untuk mencegah error jika file auth.php bermasalah
+    // Manual Logout (Safety)
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-    // ... route produk manager ...
-    Route::get('/orders', \App\Livewire\Admin\OrderList::class)->name('orders');
-    Route::get('/tables', \App\Livewire\Admin\TableManager::class)->name('tables');
-    Route::get('/history', \App\Livewire\Admin\OrderHistory::class)->name('history');
-    Route::get('/admin/orders', OrderManager::class)->name('admin.orders');
-    Route::get('/history', TransactionHistory::class)->name('admin.history');
-    Route::get('/admin/cashier', Cashier::class)->name('admin.cashier');
-    Route::get('/admin/reports', Reports::class)->name('admin.reports');
-});
 
-// Memuat file auth bawaan (Login, Register, Reset Password, dll)
-if (file_exists(__DIR__ . '/auth.php')) {
-    require __DIR__ . '/auth.php';
-}
-// Rute Publik untuk Pelanggan (Scan QR)
-// URL contoh: http://laracarte.test/order/meja-1-xyz
-Route::get('/order/{slug}', \App\Livewire\Front\OrderIndex::class)->name('order.index');
-Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
-    ->name('logout');
-Route::get('/table/{slug}', OrderPage::class)->name('front.order');
+    // Admin Panel Group
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/products', ProductManager::class)->name('products');
+        Route::get('/kitchen', OrderManager::class)->name('kitchen');
+        Route::get('/tables', TableManager::class)->name('tables');
+        Route::get('/cashier', Cashier::class)->name('cashier');
+        Route::get('/history', OrderHistory::class)->name('history');
+        Route::get('/transactions', TransactionHistory::class)->name('transactions');
+        Route::get('/reports', Reports::class)->name('reports');
+    });
+});

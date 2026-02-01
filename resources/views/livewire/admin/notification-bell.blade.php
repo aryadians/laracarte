@@ -30,7 +30,7 @@
 
         <div class="max-h-80 overflow-y-auto custom-scrollbar">
             @forelse($notifications as $notif)
-                <a href="{{ route('admin.orders') }}" wire:navigate class="block px-4 py-3 hover:bg-indigo-50 transition-colors border-b border-slate-50 last:border-0 group">
+                <a href="{{ route('admin.kitchen') }}" wire:navigate class="block px-4 py-3 hover:bg-indigo-50 transition-colors border-b border-slate-50 last:border-0 group">
                     <div class="flex justify-between items-start mb-1">
                         <div class="flex items-center gap-2">
                              @if($notif->created_at > session('last_notification_check'))
@@ -55,7 +55,7 @@
         </div>
 
         <div class="bg-slate-50 p-2 text-center border-t border-slate-100">
-            <a href="{{ route('admin.orders') }}" wire:navigate class="block w-full py-2 text-xs font-bold text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-lg transition-colors">
+            <a href="{{ route('admin.kitchen') }}" wire:navigate class="block w-full py-2 text-xs font-bold text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-lg transition-colors">
                 Lihat Semua Pesanan &rarr;
             </a>
         </div>
