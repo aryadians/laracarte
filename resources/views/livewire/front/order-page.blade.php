@@ -1,4 +1,33 @@
 <div class="relative min-h-screen pb-32" x-data>
+    {{-- Midtrans Snap JS --}}
+    @php
+        $midtransJsUrl = \App\Models\Setting::value('midtrans_is_production') == '1' 
+            ? 'https://app.midtrans.com/snap/snap.js' 
+            : 'https://app.sandbox.midtrans.com/snap/snap.js';
+        $clientKey = \App\Models\Setting::value('midtrans_client_key');
+    @endphp
+    <script src="{{ $midtransJsUrl }}" data-client-key="{{ $clientKey }}"></script>
+
+    <script>
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('pay-with-midtrans', (event) => {
+                window.snap.pay(event.token, {
+                    onSuccess: function(result) {
+                        window.location.reload();
+                    },
+                    onPending: function(result) {
+                        window.location.reload();
+                    },
+                    onError: function(result) {
+                        alert("Pembayaran gagal!");
+                    },
+                    onClose: function() {
+                        alert('Anda menutup popup tanpa menyelesaikan pembayaran');
+                    }
+                });
+            });
+        });
+    </script>
 
     {{-- NOTIFIKASI PELAYAN --}}
     @if(session()->has('success_waitress'))
@@ -266,25 +295,19 @@
                                 </div>
                             </label>
                             <label class="cursor-pointer relative">
-                                <input type="radio" wire:model.live="paymentMethod" value="qris" class="peer sr-only">
+                                <input type="radio" wire:model.live="paymentMethod" value="midtrans" class="peer sr-only">
                                 <div class="p-3 rounded-xl border-2 border-slate-100 bg-white peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:text-indigo-700 transition-all text-center h-full hover:border-slate-200">
-                                    <span class="text-2xl block mb-1">📱</span>
-                                    <span class="text-xs font-bold block">Scan QRIS</span>
+                                    <span class="text-2xl block mb-1">💳</span>
+                                    <span class="text-xs font-bold block">Bayar Sekarang</span>
+                                    <span class="text-[8px] text-slate-400 block uppercase font-bold">QRIS / E-Wallet / VA</span>
                                 </div>
                             </label>
                         </div>
                     </div>
 
-                    @if($paymentMethod == 'qris')
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
-                        <p class="text-xs font-bold text-slate-500 mb-2">Scan QRIS:</p>
-                        <div class="bg-white p-2 inline-block rounded-lg shadow-sm border border-slate-100 mb-2">
-                            <img src="{{ asset('qris.jpg') }}" class="w-32 h-32 object-contain mx-auto">
-                        </div>
-                        <div class="bg-indigo-50 rounded-lg p-2 border border-indigo-100 inline-block w-full">
-                            <p class="text-[10px] text-indigo-400 uppercase font-bold tracking-widest">Total Transfer</p>
-                            <p class="text-lg font-black text-indigo-600">Rp {{ number_format($this->getGrandTotal(), 0, ',', '.') }}</p>
-                        </div>
+                    @if($paymentMethod == 'midtrans')
+                    <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100 text-center animate-pulse">
+                        <p class="text-xs font-bold text-indigo-600">Pembayaran akan diverifikasi otomatis oleh sistem.</p>
                     </div>
                     @endif
                 </div>

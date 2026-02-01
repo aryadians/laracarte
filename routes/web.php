@@ -22,6 +22,13 @@ use App\Livewire\Admin\Settings;
 |--------------------------------------------------------------------------
 */
 
+use App\Http\Controllers\MidtransWebhookController;
+
+// ...
+
+// Webhook Midtrans (Public)
+Route::post('/webhook/midtrans', [MidtransWebhookController::class, 'handle']);
+
 // Public Routes
 Route::get('/', function () {
     return redirect()->route('login');

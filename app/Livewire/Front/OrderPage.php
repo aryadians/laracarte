@@ -281,13 +281,15 @@ class OrderPage extends Component
     {
         $this->validate([
             'customerName' => 'required|string|min:3|max:50',
-            'paymentMethod' => 'required|in:cashier,qris',
+            'paymentMethod' => 'required|in:cashier,midtrans',
         ]);
 
         if (empty($this->cart)) return;
 
         try {
-            DB::transaction(function () {
+            $snapToken = null;
+
+            DB::transaction(function () use (&$snapToken) {
                 // 1. Buat Order
                 $order = Order::create([
                     'table_id' => $this->table->id,
@@ -305,23 +307,16 @@ class OrderPage extends Component
                 // 2. Simpan Item & Varian
                 foreach ($this->cart as $uuid => $item) {
                     $product = Product::lockForUpdate()->find($item['product_id']);
-
                     if ($product) {
-                        if ($product->stock < $item['qty']) {
-                            throw new \Exception("Stok {$product->name} habis/kurang!");
-                        }
-
-                        // Simpan Order Item
                         $orderItem = OrderItem::create([
                             'order_id' => $order->id,
                             'product_id' => $product->id,
                             'quantity' => $item['qty'],
-                            'price' => $item['price'] // Harga sudah termasuk varian
+                            'price' => $item['price']
                         ]);
 
-                        // Simpan Rincian Varian (Jika ada)
                         foreach ($item['variants'] as $variant) {
-                            OrderItemVariant::create([
+                            \App\Models\OrderItemVariant::create([
                                 'order_item_id' => $orderItem->id,
                                 'product_variant_option_id' => $variant['option_id'],
                                 'variant_name' => $variant['variant_name'],
@@ -329,23 +324,29 @@ class OrderPage extends Component
                                 'price' => $variant['price']
                             ]);
                         }
-
-                        // Kurangi stok
                         $product->decrement('stock', $item['qty']);
                     }
                 }
 
-                // 3. Broadcast
+                // 3. Jika pakai Midtrans, generate token
+                if ($this->paymentMethod == 'midtrans') {
+                    $midtrans = new \App\Services\MidtransService();
+                    $snapToken = $midtrans->getSnapToken($order);
+                    $order->update(['payment_token' => $snapToken]);
+                }
+
                 OrderCreated::dispatch($order);
             });
 
-            // 4. Reset
-            $this->cart = [];
-            $this->isCheckoutOpen = false;
-            $this->customerName = '';
-            $this->orderNote = '';
-            
-            session()->flash('success', 'Pesanan berhasil! Silakan bayar di kasir.');
+            if ($this->paymentMethod == 'midtrans') {
+                $this->dispatch('pay-with-midtrans', token: $snapToken);
+            } else {
+                $this->cart = [];
+                $this->isCheckoutOpen = false;
+                $this->customerName = '';
+                $this->orderNote = '';
+                session()->flash('success', 'Pesanan berhasil! Silakan bayar di kasir.');
+            }
 
         } catch (\Exception $e) {
             $this->addError('checkout_error', 'Gagal: ' . $e->getMessage());

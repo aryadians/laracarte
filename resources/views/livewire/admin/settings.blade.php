@@ -69,6 +69,30 @@
                 </div>
             </div>
 
+            {{-- Midtrans Integration --}}
+            <div class="pt-8 border-t border-slate-100">
+                <h3 class="font-bold text-slate-700 border-b border-slate-100 pb-2 mb-6 uppercase text-xs tracking-wider">Integrasi Pembayaran Otomatis (Midtrans)</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="md:col-span-1">
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Environment</label>
+                        <select wire:model="midtransIsProduction" class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 font-medium text-slate-800">
+                            <option value="0">Sandbox (Testing)</option>
+                            <option value="1">Production (Live)</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-1">
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Client Key</label>
+                        <input wire:model="midtransClientKey" type="text" class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 font-medium text-slate-800" placeholder="SB-Mid-client-...">
+                    </div>
+                    <div class="md:col-span-1">
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Server Key</label>
+                        <input wire:model="midtransServerKey" type="password" class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 font-medium text-slate-800" placeholder="SB-Mid-server-...">
+                    </div>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-3 italic">*Kosongkan jika hanya ingin menggunakan pembayaran manual di kasir.</p>
+            </div>
+
             <div class="pt-6 border-t border-slate-100 flex justify-end">
                 <button type="submit" class="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-500/30 transition-all active:scale-95 flex items-center gap-2">
                     <svg wire:loading.remove class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>

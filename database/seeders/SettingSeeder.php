@@ -33,6 +33,21 @@ class SettingSeeder extends Seeder
                 'value' => '5',
                 'description' => 'Persentase Service Charge'
             ],
+            [
+                'key' => 'midtrans_server_key',
+                'value' => '',
+                'description' => 'Midtrans Server Key'
+            ],
+            [
+                'key' => 'midtrans_client_key',
+                'value' => '',
+                'description' => 'Midtrans Client Key'
+            ],
+            [
+                'key' => 'midtrans_is_production',
+                'value' => '0',
+                'description' => '0 untuk Sandbox, 1 untuk Production'
+            ],
         ];
 
         foreach ($settings as $setting) {
