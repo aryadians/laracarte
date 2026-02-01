@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\WaitressCall;
+use App\Events\OrderCreated;
 use Illuminate\Support\Facades\DB;
 
 class OrderPage extends Component
@@ -143,7 +144,7 @@ class OrderPage extends Component
         session()->flash('success_waitress', 'Pelayan sedang menuju ke mejamu!');
     }
 
-    // --- SUBMIT ORDER (INTI PERUBAHAN) ---
+    // --- SUBMIT ORDER ---
     public function submitOrder()
     {
         $this->validate([
@@ -194,12 +195,6 @@ class OrderPage extends Component
                             'quantity' => $qty,
                             'price' => $product->price
                         ]);
-
-use App\Events\OrderCreated;
-
-// ... (existing imports)
-
-// ...
 
                         // Kurangi stok sekarang (Reservasi stok)
                         $product->decrement('stock', $qty);

@@ -13,6 +13,7 @@
         "livewire/livewire": "^3.6.4",
         "livewire/volt": "^1.7.0",
         "midtrans/midtrans-php": "^2.6",
+        "mike42/escpos-php": "*",
         "simplesoftwareio/simple-qrcode": "^4.2"
     },
     "require-dev": {

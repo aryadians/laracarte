@@ -145,6 +145,24 @@ class Cashier extends Component
         }
     }
 
+    /**
+     * Pemicu Cetak Langsung (Server-side)
+     */
+    public function printDirect($orderId)
+    {
+        $order = Order::with(['items.product', 'table'])->find($orderId);
+        
+        if ($order) {
+            try {
+                $printService = new \App\Services\PrintService();
+                $printService->printDirect($order);
+                session()->flash('success', 'Struk berhasil dikirim ke printer!');
+            } catch (\Exception $e) {
+                $this->addError('print_error', $e->getMessage());
+            }
+        }
+    }
+
     public function render()
     {
         // Tampilkan pesanan yang statusnya 'served' (siap bayar) atau 'paid' (riwayat hari ini)

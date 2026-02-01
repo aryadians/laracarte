@@ -59,6 +59,13 @@
                         <p class="text-[10px] text-slate-400 mt-1">Default: 5% (Isi 0 jika gratis layanan)</p>
                         @error('serviceCharge') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                     </div>
+
+                    <div class="pt-4 border-t border-slate-100">
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Nama Printer Thermal</label>
+                        <input wire:model="printerName" type="text" class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 font-medium text-slate-800 transition-all" placeholder="Contoh: POS-58">
+                        <p class="text-[10px] text-slate-400 mt-1 italic">*Hanya untuk printer yang terhubung ke server/PC kasir.</p>
+                        @error('printerName') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                    </div>
                 </div>
             </div>
 
