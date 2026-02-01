@@ -63,13 +63,13 @@
         <nav class="flex-1 overflow-y-auto py-8 px-5 space-y-10 custom-scrollbar">
 
             <div class="space-y-2">
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl transition-all duration-200 group {{ request()->routeIs('dashboard') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
+                <a wire:navigate href="{{ route('dashboard') }}" class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl transition-all duration-200 group {{ request()->routeIs('dashboard') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
                     <svg class="w-5 h-5 {{ request()->routeIs('dashboard') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
                     </svg>
                     <span class="font-bold text-sm tracking-wide">Dashboard</span>
                 </a>
-                <a href="{{ route('admin.reports') }}" class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl transition-all duration-200 group {{ request()->routeIs('admin.reports') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
+                <a wire:navigate href="{{ route('admin.reports') }}" class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl transition-all duration-200 group {{ request()->routeIs('admin.reports') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
                     <svg class="w-5 h-5 {{ request()->routeIs('admin.reports') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                     </svg>
@@ -80,14 +80,14 @@
             <div>
                 <p class="px-4 text-[10px] font-extrabold text-slate-600 uppercase tracking-widest mb-4">Master Data</p>
                 <div class="space-y-2">
-                    <a href="{{ route('admin.products') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 group {{ request()->routeIs('admin.products') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
+                    <a wire:navigate href="{{ route('admin.products') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 group {{ request()->routeIs('admin.products') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.products') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
                         </svg>
                         <span class="font-bold text-sm">Produk & Menu</span>
                     </a>
 
-                    <a href="{{ route('admin.tables') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 group {{ request()->routeIs('admin.tables') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
+                    <a wire:navigate href="{{ route('admin.tables') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 group {{ request()->routeIs('admin.tables') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.tables') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                         </svg>
@@ -99,28 +99,28 @@
             <div>
                 <p class="px-4 text-[10px] font-extrabold text-slate-600 uppercase tracking-widest mb-4">Operasional</p>
                 <div class="space-y-2">
-                    <a href="{{ route('admin.kitchen') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 group {{ request()->routeIs('admin.kitchen') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
+                    <a wire:navigate href="{{ route('admin.kitchen') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 group {{ request()->routeIs('admin.kitchen') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.kitchen') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
                         </svg>
                         <span class="font-bold text-sm">Dapur (KDS)</span>
                     </a>
 
-                    <a href="{{ route('admin.cashier') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 group {{ request()->routeIs('admin.cashier') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
+                    <a wire:navigate href="{{ route('admin.cashier') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 group {{ request()->routeIs('admin.cashier') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.cashier') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2-2v14a2 2 0 002 2z"></path>
                         </svg>
                         <span class="font-bold text-sm">Kasir (POS)</span>
                     </a>
 
-                    <a href="{{ route('admin.history') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 group {{ request()->routeIs('admin.history') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
+                    <a wire:navigate href="{{ route('admin.history') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 group {{ request()->routeIs('admin.history') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.history') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
                         </svg>
                         <span class="font-bold text-sm">Riwayat Transaksi</span>
                     </a>
 
-                    <a href="{{ route('admin.transactions') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 group {{ request()->routeIs('admin.transactions') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
+                    <a wire:navigate href="{{ route('admin.transactions') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 group {{ request()->routeIs('admin.transactions') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('admin.transactions') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
