@@ -276,6 +276,20 @@
 
                     {{-- Form Input --}}
                     <div class="space-y-3">
+                        <div class="bg-indigo-50 p-4 rounded-2xl border border-indigo-100 mb-2">
+                            <label class="block text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">Punya Member? (Masukkan No. WA)</label>
+                            <input wire:model.live="memberPhone" type="number" placeholder="0812xxxx" class="w-full rounded-xl border-slate-200 focus:ring-indigo-500 font-bold text-slate-800 py-2.5 text-sm">
+                            @if($isMember)
+                                <p class="text-[10px] text-green-600 font-bold mt-2 flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                    Member Terdeteksi: {{ $memberPoints }} Poin
+                                </p>
+                            @elseif(strlen($memberPhone) >= 10)
+                                <p class="text-[10px] text-indigo-500 font-bold mt-2">Nomor baru? Otomatis jadi member & dapat poin!</p>
+                            @endif
+                            @error('memberPhone') <span class="text-red-500 text-[10px] font-bold mt-1">{{ $message }}</span> @enderror
+                        </div>
+
                         <div>
                             <input wire:model="customerName" type="text" placeholder="Nama Pemesan (Wajib)" class="w-full rounded-2xl border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 font-bold text-slate-800 py-3.5 text-sm">
                             @error('customerName') <span class="text-red-500 text-xs font-bold ml-1 block">{{ $message }}</span> @enderror
