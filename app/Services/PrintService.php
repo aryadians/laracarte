@@ -63,6 +63,14 @@ class PrintService
             $name = $item->product->name;
             $printer->text($name . "\n");
             
+            // Print Varian
+            if ($item->selectedVariants->isNotEmpty()) {
+                $variants = $item->selectedVariants->pluck('option_name')->join(', ');
+                $printer->selectPrintMode(Printer::MODE_FONT_B); // Font kecil
+                $printer->text("  + " . $variants . "\n");
+                $printer->selectPrintMode(); // Balik normal
+            }
+            
             $qty = $item->quantity . " x " . number_format($item->price, 0, ',', '.');
             $sub = number_format($item->quantity * $item->price, 0, ',', '.');
             

@@ -115,6 +115,11 @@
                         <div class="flex justify-between items-start text-sm">
                             <div>
                                 <p class="font-bold text-slate-800">{{ $item->product->name }}</p>
+                                @if($item->selectedVariants->isNotEmpty())
+                                    <p class="text-[10px] text-indigo-600 mt-0.5 font-medium">
+                                        + {{ $item->selectedVariants->pluck('option_name')->join(', ') }}
+                                    </p>
+                                @endif
                                 <p class="text-xs text-slate-400">{{ $item->quantity }}x @ Rp {{ number_format($item->price, 0, ',', '.') }}</p>
                             </div>
                             <p class="font-bold text-slate-800">Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}</p>

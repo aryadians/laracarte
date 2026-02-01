@@ -77,7 +77,18 @@
                             @foreach($order->items as $item)
                                 <div class="flex gap-3 items-start">
                                     <span class="font-black text-slate-700 bg-white border border-slate-200 px-2 py-0.5 rounded-md text-sm shadow-sm min-w-[30px] text-center">{{ $item->quantity }}x</span>
-                                    <span class="font-bold text-slate-700 text-sm leading-snug pt-0.5">{{ $item->product->name }}</span>
+                                    <div>
+                                        <span class="font-bold text-slate-700 text-sm leading-snug pt-0.5 block">{{ $item->product->name }}</span>
+                                        @if($item->selectedVariants->isNotEmpty())
+                                            <div class="flex flex-wrap gap-1 mt-1">
+                                                @foreach($item->selectedVariants as $v)
+                                                    <span class="text-[10px] bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded border border-indigo-100 font-bold">
+                                                        {{ $v->option_name }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </div>
                                 </div>
                             @endforeach
                         </div>

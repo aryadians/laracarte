@@ -86,6 +86,7 @@
                     </td>
 
                     <td class="px-6 py-4 text-center">
+                        <button wire:click="manageVariants({{ $product->id }})" class="text-orange-600 hover:text-orange-900 font-bold mr-3 text-xs bg-orange-50 px-3 py-1.5 rounded-lg hover:bg-orange-100 transition">Varian</button>
                         <button wire:click="edit({{ $product->id }})" class="text-indigo-600 hover:text-indigo-900 font-bold mr-3 text-xs bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition">Edit</button>
                         <button wire:click="delete({{ $product->id }})" class="text-red-600 hover:text-red-900 font-bold text-xs bg-red-50 px-3 py-1.5 rounded-lg hover:bg-red-100 transition" onclick="confirm('Yakin ingin menghapus produk ini?') || event.stopImmediatePropagation()">Hapus</button>
                     </td>
@@ -193,6 +194,23 @@
                     <span wire:loading.remove wire:target="{{ $isEditMode ? 'update' : 'store' }}">{{ $isEditMode ? 'Simpan Perubahan' : 'Simpan Produk' }}</span>
                     <span wire:loading wire:target="{{ $isEditMode ? 'update' : 'store' }}">Menyimpan...</span>
                 </button>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    @if($isVariantModalOpen)
+    <div class="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 transition-opacity">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl h-[85vh] overflow-hidden animate-zoom-in relative flex flex-col">
+            <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center shrink-0">
+                <h3 class="text-lg font-black text-slate-800">Kelola Varian & Topping</h3>
+                <button wire:click="closeVariantModal" class="text-slate-400 hover:text-slate-600 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto custom-scrollbar bg-white">
+                <livewire:admin.product-variants :productId="$selectedProductIdForVariants" />
             </div>
         </div>
     </div>

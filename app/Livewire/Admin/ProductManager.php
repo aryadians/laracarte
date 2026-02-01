@@ -25,7 +25,23 @@ class ProductManager extends Component
     // Variabel UI
     public $isOpen = false;
     public $isEditMode = false;
+    public $isVariantModalOpen = false;
+    public $selectedProductIdForVariants = null;
     public $search = '';
+
+    // ...
+
+    public function manageVariants($productId)
+    {
+        $this->selectedProductIdForVariants = $productId;
+        $this->isVariantModalOpen = true;
+    }
+
+    public function closeVariantModal()
+    {
+        $this->isVariantModalOpen = false;
+        $this->selectedProductIdForVariants = null;
+    }
 
     // Rules Validasi
     protected $rules = [

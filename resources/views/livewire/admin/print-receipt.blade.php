@@ -30,6 +30,11 @@
         @foreach($order->items as $item)
         <div class="mb-1">
             <div class="font-bold">{{ $item->product->name }}</div>
+            @if($item->selectedVariants->isNotEmpty())
+                <div class="text-[8px] italic pl-2">
+                    + {{ $item->selectedVariants->pluck('option_name')->join(', ') }}
+                </div>
+            @endif
             <div class="flex">
                 <span>{{ $item->quantity }} x {{ number_format($item->price, 0, ',', '.') }}</span>
                 <span>{{ number_format($item->quantity * $item->price, 0, ',', '.') }}</span>
