@@ -1,105 +1,137 @@
-<p align="center">
-  <img src="https://api.iconify.design/mdi/silverware-fork-knife.svg?color=%234f46e5&width=120&height=120" alt="LaraCarte Logo">
-</p>
+# 🍽️ LaraCarte
+### Modern Restaurant POS & Management System
 
-<h1 align="center">LaraCarte</h1>
+![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel)
+![Livewire](https://img.shields.io/badge/Livewire-3.x-4E56A6?style=for-the-badge&logo=livewire)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-3.x-38B2AC?style=for-the-badge&logo=tailwind-css)
+![AlpineJS](https://img.shields.io/badge/Alpine.js-3.x-8BC0D0?style=for-the-badge&logo=alpine.js)
+![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1?style=for-the-badge&logo=mysql)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-<p align="center">
-  Modern, Real-Time Restaurant & Cafe Point of Sale (POS) System.
-  <br>
-  Built with the <strong>TALL Stack</strong>: Tailwind, Alpine.js, Laravel, and Livewire.
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/PHP-8.2+-777BB4.svg?style=for-the-badge&logo=php" alt="PHP 8.2+">
-  <img src="https://img.shields.io/badge/Laravel-11.x-FF2D20.svg?style=for-the-badge&logo=laravel" alt="Laravel 11.x">
-  <img src="https://img.shields.io/badge/Livewire-3.x-4d55d2.svg?style=for-the-badge&logo=livewire" alt="Livewire 3">
-  <img src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" alt="License MIT">
-</p>
+**LaraCarte** adalah solusi lengkap manajemen restoran berbasis web yang dirancang untuk kecepatan dan efisiensi. Dari pemesanan mandiri via QR Code hingga tampilan dapur real-time, semuanya terintegrasi dalam satu sistem yang mulus.
 
 ---
 
-**LaraCarte** adalah sistem manajemen restoran dan kafe yang intuitif dan *real-time*. Didesain untuk menyederhanakan operasional, mulai dari manajemen menu, pesanan pelanggan, hingga proses pembayaran di kasir. Pelanggan dapat dengan mudah memesan melalui QR code di meja mereka, dan semua pesanan akan langsung tampil di dasbor admin secara instan.
+## 🚀 Fitur Unggulan (v1.0.0)
 
-## ✨ Fitur Utama
+### 📱 1. Self-Service QR Ordering
+Pelanggan memesan langsung dari meja mereka tanpa menunggu pelayan.
+- **Scan & Order:** Akses menu instan via QR Code unik per meja.
+- **Product Variants:** Dukungan untuk varian kompleks (e.g., Level Pedas, Extra Topping).
+- **Flexible Cart:** Keranjang belanja cerdas yang memisahkan item berdasarkan varian.
+- **Call Waitress:** Tombol panggil pelayan digital.
 
-### 🤵 Panel Admin
-- 📈 **Dasbor Interaktif**: Pantau penjualan, pesanan masuk, dan produk terlaris secara *real-time*.
-- 📦 **Manajemen Produk**: Atur menu, kategori, dan ketersediaan stok dengan mudah.
-- 🍽️ **Manajemen Meja**: Kelola status meja (tersedia, terisi) untuk efisiensi layanan.
-- 🛒 **Manajemen Pesanan**: Lihat dan kelola status pesanan (pending, dimasak, selesai) dalam satu layar.
-- 💰 **Antarmuka Kasir**: Proses pembayaran dari pelanggan dengan cepat dan efisien.
-- 📜 **Riwayat Transaksi**: Catat dan lihat semua transaksi yang telah selesai untuk keperluan akuntansi.
-- 🔔 **Notifikasi Real-Time**: Dapatkan pemberitahuan instan untuk pesanan baru atau panggilan pelayan.
+### 👨‍🍳 2. Real-Time Kitchen Display System (KDS)
+Ditenagai oleh **Laravel Reverb (WebSocket)**.
+- **Instant Updates:** Pesanan muncul di layar dapur detik itu juga tanpa refresh.
+- **Visual Status:** Indikator warna untuk status *Pending* (Baru), *Cooking* (Dimasak), dan *Served* (Saji).
+- **Audio Alert:** Notifikasi suara saat pesanan baru masuk atau ada panggilan pelayan.
 
-### 📱 Sisi Pelanggan
-- 🤳 **Pemesanan via QR Code**: Pelanggan memindai QR code di meja untuk melihat menu dan memesan.
-- 🛍️ **Keranjang Belanja Dinamis**: Pelanggan dapat menambah atau mengubah pesanan mereka secara langsung.
-- 🙋 **Panggil Pelayan**: Tombol khusus bagi pelanggan untuk memanggil pelayan ke meja mereka.
+### 💰 3. Modern Point of Sales (POS)
+Kasir yang cepat dan responsif.
+- **Quick Checkout:** Proses pembayaran Tunai & QRIS yang efisien.
+- **Thermal Printing:**
+    - **Direct Print:** Cetak langsung ke printer ESC/POS (Server-side).
+    - **Popup Print:** Cetak struk rapi via browser (Client-side).
+- **QRIS Validation:** Fitur konfirmasi pembayaran digital.
 
-## 🛠️ Teknologi yang Digunakan
+### 📊 4. Laporan & Analitik
+Pantau performa bisnis Anda secara akurat.
+- **Dashboard Interaktif:** Grafik omzet harian, stok menipis, dan produk terlaris.
+- **Export Data:** Download laporan penjualan dalam format **Excel** (.xlsx) dan **PDF**.
+- **Date Filter:** Filter laporan berdasarkan rentang tanggal kustom.
 
-| Kategori | Teknologi |
-| :--- | :--- |
-| **Framework** | 🚀 Laravel 11 |
-| **UI/Frontend** | ⚡ Livewire 3, 🍃 Alpine.js, 💨 Tailwind CSS |
-| **Database** | 🗄️ MySQL (default), PostgreSQL, SQLite |
-| **Server-side** | 🐘 PHP 8.2+ |
-| **Dev Tools** | 🎨 Vite, 📦 Composer, 📮 NPM |
+### ⚙️ 5. Manajemen Toko Dinamis
+- **Settings UI:** Ubah Nama Toko, Pajak (%), Service Charge (%), dan Nama Printer langsung dari admin panel.
+- **Table Management:** Generate dan cetak kartu QR meja secara otomatis.
+- **Inventory:** Peringatan stok menipis otomatis.
 
-## 🏁 Instalasi & Setup
+---
 
-Ikuti langkah-langkah berikut untuk menjalankan proyek ini di lingkungan lokal Anda.
+## 🛠️ Persyaratan Sistem
+
+- PHP 8.2+
+- Composer
+- Node.js & NPM
+- MySQL
+- Printer Thermal (Opsional, untuk fitur cetak fisik)
+
+---
+
+## 📦 Instalasi (Local Development)
 
 1.  **Clone Repository**
-    ```sh
-    git clone https://github.com/your-username/laracarte.git
+    ```bash
+    git clone https://github.com/username/laracarte.git
     cd laracarte
     ```
 
 2.  **Install Dependencies**
-    ```sh
+    ```bash
     composer install
     npm install
     ```
 
 3.  **Setup Environment**
-    Salin file `.env.example` dan buat kunci aplikasi.
-    ```sh
+    ```bash
     cp .env.example .env
     php artisan key:generate
     ```
+    *Edit file `.env` dan sesuaikan koneksi database Anda.*
 
-4.  **Konfigurasi Database**
-    Buka file `.env` dan sesuaikan pengaturan database Anda (`DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`).
-
-5.  **Jalankan Migrasi & Seeder**
-    Perintah ini akan membuat struktur tabel dan mengisi data awal (termasuk akun admin).
-    ```sh
+4.  **Migrasi & Seeding**
+    ```bash
     php artisan migrate --seed
+    # Seed akan mengisi user admin default dan setting awal
     ```
 
-6.  **Jalankan Server**
-    ```sh
-    npm run dev
+5.  **Setup Storage**
+    ```bash
+    php artisan storage:link
+    ```
+
+6.  **Jalankan Aplikasi**
+    Anda perlu menjalankan 3 terminal terpisah:
+    
+    *Terminal 1 (Server Laravel):*
+    ```bash
     php artisan serve
     ```
+    
+    *Terminal 2 (Vite Assets):*
+    ```bash
+    npm run dev
+    ```
+    
+    *Terminal 3 (Reverb WebSocket):*
+    ```bash
+    php artisan reverb:start
+    ```
 
-7.  **Selesai!**
-    Aplikasi Anda sekarang berjalan di `http://127.0.0.1:8000`.
-    -   **Admin Email**: `admin@laracarte.com`
-    -   **Password**: `password`
+---
 
-## 🤝 Berkontribusi
+## 📘 Dokumentasi
 
-Kontribusi Anda sangat kami hargai! Jika Anda ingin berkontribusi, silakan fork proyek ini dan buat *pull request*.
+- **[Panduan Pengguna (User Guide)](PANDUAN_PENGGUNA.md)**: Cara menggunakan aplikasi untuk Kasir, Koki, dan Admin.
+- **[Panduan Deployment](DEPLOYMENT.md)**: Cara mengonlinekan aplikasi ke VPS/Hosting.
 
-1.  Fork the Project
-2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4.  Push to the Branch (`git push origin feature/AmazingFeature`)
-5.  Open a Pull Request
+---
 
-## 📄 Lisensi
+## 🔐 Akun Default (Seeder)
 
-Didistribusikan di bawah Lisensi MIT. Lihat `LICENSE` untuk informasi lebih lanjut.
+*   **Email:** `admin@laracarte.com` (Cek `DatabaseSeeder.php` jika berbeda)
+*   **Password:** `password`
+
+---
+
+## ❤️ Credits
+
+Dibuat dengan framework **Laravel** yang luar biasa.
+- **Livewire** untuk interaktivitas full-stack.
+- **Tailwind CSS** untuk desain modern.
+- **Laravel Reverb** untuk WebSocket real-time.
+- **Mike42/Escpos** untuk thermal printing.
+
+---
+
+**LaraCarte** - *Digitize Your Restaurant Today.*
