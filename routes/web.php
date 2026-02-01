@@ -13,6 +13,7 @@ use App\Livewire\Admin\Cashier;
 use App\Livewire\Admin\Reports;
 use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\IngredientManager;
+use App\Livewire\Admin\Expo;
 use App\Livewire\Front\OrderIndex;
 use App\Livewire\Front\OrderPage;
 use App\Livewire\Admin\PrintReceipt;
@@ -32,9 +33,14 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+use App\Livewire\Front\Kiosk;
+
+// ...
+
 // Customer Routes (Scan QR)
 Route::get('/order/{slug}', OrderIndex::class)->name('order.index');
 Route::get('/table/{slug}', OrderPage::class)->name('front.order');
+Route::get('/kiosk/{slug}', Kiosk::class)->name('front.kiosk');
 
 // Auth Routes (Login, Register, etc.)
 if (file_exists(__DIR__ . '/auth.php')) {
@@ -56,10 +62,6 @@ Route::middleware('auth')->group(function () {
 
     // Manual Logout (Safety)
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-
-use App\Livewire\Admin\Expo;
-
-// ...
 
     // Admin Panel Group
     Route::prefix('admin')->name('admin.')->group(function () {

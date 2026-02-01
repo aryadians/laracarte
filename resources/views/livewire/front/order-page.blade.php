@@ -319,7 +319,7 @@
                 @enderror
 
                 <button wire:click="submitOrder" wire:loading.attr="disabled" class="w-full bg-slate-900 text-white font-bold py-4 rounded-2xl shadow-xl hover:bg-slate-800 active:scale-95 transition-all flex justify-center items-center gap-2">
-                    <span wire:loading.remove>🚀 {{ $paymentMethod == 'qris' ? 'Saya Sudah Transfer' : 'Pesan Sekarang' }}</span>
+                    <span wire:loading.remove>🚀 {{ $paymentMethod == 'midtrans' ? 'Saya Sudah Transfer' : 'Pesan Sekarang' }}</span>
                     <span wire:loading>Memproses...</span>
                 </button>
             </div>
