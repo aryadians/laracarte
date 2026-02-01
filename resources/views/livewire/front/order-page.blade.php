@@ -137,7 +137,7 @@
                     </div>
                     <div class="text-left flex flex-col">
                         <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Total Bayar</span>
-                        <span class="font-black text-lg leading-none tracking-tight">Rp {{ number_format($this->getTotalPrice(), 0, ',', '.') }}</span>
+                        <span class="font-black text-lg leading-none tracking-tight">Rp {{ number_format($this->getGrandTotal(), 0, ',', '.') }}</span>
                     </div>
                 </div>
                 <div class="bg-white text-slate-900 px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 group-active:scale-95 transition-transform shadow-lg">
@@ -190,9 +190,24 @@
 
                 {{-- Total & Form (Dipindahkan ke scrollable area agar tidak terpotong) --}}
                 <div class="space-y-4 pb-4">
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-slate-500 text-sm">Grand Total</span>
-                        <span class="font-black text-indigo-600 text-2xl">Rp {{ number_format($this->getTotalPrice(), 0, ',', '.') }}</span>
+                    <div class="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <div class="flex justify-between items-center text-xs text-slate-500">
+                            <span>Subtotal</span>
+                            <span>Rp {{ number_format($this->getSubtotal(), 0, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs text-slate-500">
+                            <span>Service Charge ({{ $serviceRate }}%)</span>
+                            <span>Rp {{ number_format($this->getServiceCharge(), 0, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs text-slate-500">
+                            <span>Tax ({{ $taxRate }}%)</span>
+                            <span>Rp {{ number_format($this->getTaxAmount(), 0, ',', '.') }}</span>
+                        </div>
+                        <div class="border-t border-slate-200 my-2"></div>
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-slate-800 text-sm">Grand Total</span>
+                            <span class="font-black text-indigo-600 text-xl">Rp {{ number_format($this->getGrandTotal(), 0, ',', '.') }}</span>
+                        </div>
                     </div>
 
                     {{-- Form Input --}}
@@ -243,7 +258,7 @@
                         </div>
                         <div class="bg-indigo-50 rounded-lg p-2 border border-indigo-100 inline-block w-full">
                             <p class="text-[10px] text-indigo-400 uppercase font-bold tracking-widest">Total Transfer</p>
-                            <p class="text-lg font-black text-indigo-600">Rp {{ number_format($this->getTotalPrice(), 0, ',', '.') }}</p>
+                            <p class="text-lg font-black text-indigo-600">Rp {{ number_format($this->getGrandTotal(), 0, ',', '.') }}</p>
                         </div>
                         <p class="text-[10px] text-red-500 mt-2 italic">*Pastikan nominal transfer sesuai.</p>
                     </div>

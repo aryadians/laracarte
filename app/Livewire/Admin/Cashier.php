@@ -40,11 +40,13 @@ class Cashier extends Component
                 return $item->price * $item->quantity;
             });
 
-            // 2. Hitung Service Charge 5% (Opsional)
-            $this->service = ceil($this->subtotal * 0.05);
+            // 2. Hitung Service Charge (Ambil dr DB)
+            $serviceRate = (int) \App\Models\Setting::value('service_charge', 5);
+            $this->service = ceil($this->subtotal * ($serviceRate / 100));
 
-            // 3. Hitung PPN 11% (Dari Subtotal + Service)
-            $this->tax = ceil(($this->subtotal + $this->service) * 0.11);
+            // 3. Hitung PPN (Ambil dr DB)
+            $taxRate = (int) \App\Models\Setting::value('tax_rate', 11);
+            $this->tax = ceil(($this->subtotal + $this->service) * ($taxRate / 100));
 
             // 4. Hitung Grand Total (Total Akhir)
             $this->grandTotal = $this->subtotal + $this->service + $this->tax;

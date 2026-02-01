@@ -28,11 +28,18 @@ class OrderPage extends Component
     // BARU: Pilihan Pembayaran (Default: Bayar di Kasir)
     public $paymentMethod = 'cashier';
 
+    // Settings
+    public $taxRate = 0;
+    public $serviceRate = 0;
+
     public function mount($slug)
     {
         $this->table = Table::where('slug', $slug)->firstOrFail();
         $this->table_name = $this->table->name;
         session()->put('table_id', $this->table->id);
+
+        $this->taxRate = (int) \App\Models\Setting::value('tax_rate', 11);
+        $this->serviceRate = (int) \App\Models\Setting::value('service_charge', 5);
     }
 
     public function setCategory($id)
@@ -73,7 +80,7 @@ class OrderPage extends Component
         return array_sum($this->cart);
     }
 
-    public function getTotalPrice()
+    public function getSubtotal()
     {
         $total = 0;
         if (empty($this->cart)) return 0;
@@ -85,6 +92,26 @@ class OrderPage extends Component
             }
         }
         return $total;
+    }
+
+    public function getTotalPrice()
+    {
+        return $this->getSubtotal();
+    }
+
+    public function getServiceCharge()
+    {
+        return ceil($this->getSubtotal() * ($this->serviceRate / 100));
+    }
+
+    public function getTaxAmount()
+    {
+        return ceil(($this->getSubtotal() + $this->getServiceCharge()) * ($this->taxRate / 100));
+    }
+
+    public function getGrandTotal()
+    {
+        return $this->getSubtotal() + $this->getServiceCharge() + $this->getTaxAmount();
     }
 
     // --- CHECKOUT UI ---
@@ -131,12 +158,20 @@ class OrderPage extends Component
 
         try {
             DB::transaction(function () {
+                $subtotal = $this->getSubtotal();
+                $service = $this->getServiceCharge();
+                $tax = $this->getTaxAmount();
+                $grandTotal = $this->getGrandTotal();
+
                 // 1. Buat Order
                 $order = Order::create([
                     'table_id' => $this->table->id,
                     'customer_name' => $this->customerName,
                     'note' => $this->orderNote,
-                    'total_price' => $this->getTotalPrice(),
+                    'subtotal' => $subtotal,
+                    'service_charge' => $service,
+                    'tax_amount' => $tax,
+                    'total_price' => $grandTotal,
                     'status' => 'pending',
                     'payment_method' => $this->paymentMethod, // Simpan Pilihan User
                     'stock_reduced' => true, // KITA KURANGI STOK DISINI (Agar tidak double di kasir)
