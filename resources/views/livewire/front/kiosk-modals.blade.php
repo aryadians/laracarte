@@ -110,6 +110,31 @@
                             </label>
                         </div>
                     </div>
+
+                    <div class="bg-slate-50 p-8 rounded-[2rem] border border-slate-100 space-y-3 mt-8">
+                        <div class="flex justify-between items-center text-slate-500 font-bold">
+                            <span>Subtotal</span>
+                            <span>Rp {{ number_format($this->getSubtotal(), 0, ',', '.') }}</span>
+                        </div>
+                        @if($discountAmount > 0)
+                        <div class="flex justify-between items-center text-emerald-600 font-black">
+                            <span>Diskon ({{ $appliedPromoName }})</span>
+                            <span>- Rp {{ number_format($discountAmount, 0, ',', '.') }}</span>
+                        </div>
+                        @endif
+                        <div class="flex justify-between items-center text-slate-500 font-bold text-sm">
+                            <span>Service Charge ({{ $serviceRate }}%)</span>
+                            <span>Rp {{ number_format($this->getServiceCharge(), 0, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-slate-500 font-bold text-sm">
+                            <span>Pajak ({{ $taxRate }}%)</span>
+                            <span>Rp {{ number_format($this->getTaxAmount(), 0, ',', '.') }}</span>
+                        </div>
+                        <div class="border-t border-slate-200 pt-4 mt-2 flex justify-between items-center">
+                            <span class="font-black text-slate-800 text-xl">TOTAL BAYAR</span>
+                            <span class="font-black text-indigo-600 text-3xl">Rp {{ number_format($this->getGrandTotal(), 0, ',', '.') }}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 

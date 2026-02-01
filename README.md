@@ -3,7 +3,7 @@
   <img src="public/favicon.svg" alt="LaraCarte Logo" width="100" height="100">
 
   # LaraCarte
-  ### Restaurant POS & Management System
+  ### Professional Restaurant POS & Management System
 
   <p align="center">
     <a href="https://laravel.com">
@@ -25,129 +25,92 @@
     <a href="https://reverb.laravel.com">
       <img src="https://img.shields.io/badge/Laravel_Reverb-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Reverb">
     </a>
+    <a href="https://midtrans.com">
+      <img src="https://img.shields.io/badge/Midtrans-002855?style=for-the-badge&logo=visa&logoColor=white" alt="Midtrans">
+    </a>
   </p>
 
   <p align="center">
-    <strong>Sistem Manajemen Restoran Terintegrasi: Pesan, Masak, Bayar, Pantau.</strong>
+    <strong>Solusi End-to-End untuk Restoran Modern: Dari Order Mandiri hingga Loyalty Member.</strong>
   </p>
 
 </div>
 
 ---
 
-## ✨ Fitur Lengkap
+## ✨ Fitur Unggulan Utama
 
-LaraCarte dirancang untuk mendigitalkan seluruh alur kerja restoran, mulai dari pelanggan duduk hingga laporan keuangan harian.
+LaraCarte bukan sekadar kasir biasa. Ini adalah ekosistem digital yang menghubungkan Pelanggan, Dapur, Pelayan, dan Pemilik Restoran secara real-time.
 
-### 📱 Pemesanan Mandiri (Customer Self-Service)
-Pelanggan memegang kendali penuh atas pesanan mereka tanpa perlu memanggil pelayan berkali-kali.
-*   **QR Code Ordering:** Pelanggan scan kode unik di meja untuk membuka menu digital.
-*   **Kustomisasi Pesanan (Varian):** Dukungan penuh untuk opsi menu seperti "Level Pedas", "Topping Tambahan", atau "Ukuran Porsi".
-*   **Keranjang Belanja Pintar:** Menampung berbagai kombinasi varian menu dalam satu transaksi.
-*   **Panggil Pelayan:** Tombol digital untuk memanggil bantuan staf ke meja.
-*   **Estimasi Harga:** Perhitungan otomatis Subtotal, Pajak, dan Service Charge sebelum checkout.
+### 📱 Customer Experience (Self-Order)
+*   **Smart QR Ordering:** Pelanggan scan QR meja untuk akses menu instan.
+*   **Product Variants:** Pilihan kompleks seperti level pedas, topping tambahan, atau ukuran porsi.
+*   **Loyalty & Member:** Sistem poin reward otomatis (Earn & Redeem) berdasarkan nomor WhatsApp pelanggan.
+*   **Integrated Payment (Midtrans):** Pembayaran otomatis via QRIS, GoPay, OVO, ShopeePay, dan Virtual Account yang terverifikasi instan.
 
-### 👨‍🍳 Sistem Dapur Real-Time (KDS)
-Komunikasi instan antara pelanggan dan dapur tanpa kertas/teriakan.
-*   **Live Updates:** Pesanan baru muncul detik itu juga di layar dapur (teknologi WebSocket).
-*   **Status Warna:** Indikator visual intuitif (Merah: Baru, Oranye: Dimasak, Biru: Siap Saji).
-*   **Notifikasi Suara:** Bunyi peringatan otomatis saat ada pesanan masuk atau panggilan pelayan.
-*   **Detail Pesanan:** Koki bisa melihat rincian varian/topping dengan jelas agar tidak salah masak.
+### 👨‍🍳 Operasional Dapur & Lantai (KDS & Expo)
+*   **Real-Time KDS:** Pesanan masuk ke layar dapur dalam hitungan milidetik tanpa refresh halaman.
+*   **Expo / Runner Screen:** Layar khusus pelayan untuk memastikan makanan yang sudah jadi segera diantar ke meja yang benar.
+*   **Audio Notification:** Notifikasi suara otomatis untuk setiap pesanan baru atau panggilan pelayan digital.
 
-### 💰 Kasir & Pembayaran (POS)
-Titik penjualan yang cepat, akurat, dan fleksibel.
-*   **Multi-Payment:** Dukungan pembayaran Tunai dan konfirmasi manual transfer QRIS.
-*   **Hitung Kembalian:** Kalkulator otomatis untuk mempercepat transaksi tunai.
-*   **Cetak Struk (Thermal Printing):**
-    *   **Direct Print:** Kirim perintah cetak langsung ke printer ESC/POS (Server-side).
-    *   **Popup Print:** Cetak melalui dialog browser dengan format kertas 58mm yang rapi.
-*   **Manajemen Meja:** Lihat status meja (Kosong/Terisi/Kotor) secara real-time.
+### 🥦 Manajemen Stok & Resep (Inventory)
+*   **Bahan Baku:** Kelola stok bahan mentah (gram, ml, butir, kg).
+*   **Recipe-Based Inventory:** Stok bahan baku terpotong otomatis saat menu terjual berdasarkan resep yang telah diatur (Cost Control).
+*   **Low Stock Alert:** Peringatan visual di dashboard saat bahan baku mencapai batas kritis.
 
-### ⚙️ Manajemen Restoran (Back Office)
-Kendali penuh di tangan pemilik/manajer.
-*   **Manajemen Produk:** Tambah/Edit/Hapus menu, atur stok, upload foto, dan kelola varian harga.
-*   **Generator QR Meja:** Buat dan cetak kartu meja berisi QR Code secara otomatis dari dashboard.
-*   **Pengaturan Toko Dinamis:** Ubah nama resto, alamat struk, persentase pajak, dan service charge tanpa coding.
-*   **Manajemen Stok:** Peringatan otomatis jika stok bahan baku menipis.
+### 💰 Kasir Profesional (POS)
+*   **Cetak Struk Thermal:** Dukungan Direct Print (ESC/POS) dan Popup Print standar 58mm.
+*   **WhatsApp Receipt:** Kirim struk belanja digital langsung ke WhatsApp pelanggan dalam satu klik.
+*   **QRIS Manual & Otomatis:** Fleksibilitas dalam menerima pembayaran digital.
 
-### 📊 Laporan & Analitik
-Data akurat untuk keputusan bisnis yang lebih baik.
-*   **Dashboard Eksekutif:** Ringkasan omzet hari ini, produk terlaris, dan antrian aktif.
-*   **Laporan Penjualan:** Filter data berdasarkan rentang tanggal tertentu.
-*   **Export Data:** Unduh laporan lengkap dalam format **Excel (.xlsx)** atau **PDF** siap cetak.
+### 📊 Admin & Analitik Lanjutan
+*   **Executive Dashboard:** Ringkasan omzet, pesanan aktif, stok menipis, dan menu terlaris dalam satu tampilan.
+*   **Laporan Dinamis:** Filter penjualan berdasarkan rentang tanggal kustom.
+*   **Export Data:** Unduh laporan lengkap dalam format **Excel (.xlsx)** atau **PDF**.
+*   **Dinamis Settings:** Atur nama resto, alamat, pajak (%), biaya layanan, dan printer langsung dari UI.
 
 ---
 
-## 🛠️ Instalasi & Penggunaan
+## 🛠️ Instalasi & Pengembangan
 
-Ikuti langkah ini untuk menjalankan LaraCarte di komputer lokal Anda.
-
-### 1. Persiapan
-Pastikan Anda sudah menginstal:
+### 1. Kebutuhan Sistem
 *   PHP 8.2+
 *   Composer
 *   Node.js & NPM
-*   MySQL
+*   MySQL 8.0+
 
-### 2. Instalasi Kode
+### 2. Langkah Instalasi
 ```bash
-# Clone repositori
+# Clone & Install
 git clone https://github.com/username/laracarte.git
 cd laracarte
-
-# Install dependensi PHP & JavaScript
 composer install
 npm install
-```
 
-### 3. Konfigurasi
-```bash
-# Setup file .env
+# Konfigurasi .env
 cp .env.example .env
 php artisan key:generate
 
-# Edit .env sesuaikan database Anda:
-# DB_DATABASE=laracarte
-# DB_USERNAME=root
-# DB_PASSWORD=
-```
-
-### 4. Database & Setup Awal
-```bash
-# Jalankan migrasi dan data awal (seeder)
+# Database Setup
 php artisan migrate --seed
 php artisan storage:link
 ```
 
-### 5. Menjalankan Aplikasi
-Anda perlu membuka **3 terminal** berbeda agar sistem berjalan penuh:
-
-*Terminal 1 (Aplikasi Utama):*
-```bash
-php artisan serve
-```
-
-*Terminal 2 (Aset Frontend):*
-```bash
-npm run dev
-```
-
-*Terminal 3 (WebSocket Real-time):*
-```bash
-php artisan reverb:start
-```
-
-Buka browser dan akses: `http://127.0.0.1:8000`
+### 3. Menjalankan Aplikasi
+Buka 3 terminal terpisah:
+1. `php artisan serve` (Aplikasi)
+2. `npm run dev` (Assets)
+3. `php artisan reverb:start` (Real-time Engine)
 
 ---
 
 ## 📘 Dokumentasi Tambahan
 
-*   **[Panduan Pengguna (User Guide)](PANDUAN_PENGGUNA.md)** - Cara pakai untuk staf.
-*   **[Panduan Deployment](DEPLOYMENT.md)** - Cara upload ke server VPS.
+*   **[Manual Pengguna](PANDUAN_PENGGUNA.md)** - Panduan operasional untuk Kasir, Koki, dan Pelayan.
+*   **[Panduan Deployment](DEPLOYMENT.md)** - Petunjuk teknis untuk instalasi di server VPS/Hosting.
 
 ---
 
 <div align="center">
-  <p>Dibuat dengan ❤️ menggunakan Laravel.</p>
+  <p>Dibuat dengan ❤️ untuk Masa Depan Digital Food & Beverage.</p>
 </div>

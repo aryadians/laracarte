@@ -12,6 +12,7 @@ use App\Models\OrderItemVariant;
 use App\Models\WaitressCall;
 use App\Models\Customer;
 use App\Models\PointTransaction;
+use App\Models\Promo;
 use App\Events\OrderCreated;
 use App\Services\MidtransService;
 use Illuminate\Support\Facades\DB;
@@ -43,9 +44,9 @@ class OrderPage extends Component
     public $memberPoints = 0;
     public $isMember = false;
 
-    // Settings
-    public $taxRate = 0;
-    public $serviceRate = 0;
+    // Promo
+    public $discountAmount = 0;
+    public $appliedPromoName = null;
 
     public function mount($slug)
     {
@@ -223,9 +224,43 @@ class OrderPage extends Component
 
     public function getTotalItems() { return collect($this->cart)->sum('qty'); }
     public function getSubtotal() { return collect($this->cart)->sum(fn($item) => $item['price'] * $item['qty']); }
-    public function getServiceCharge() { return ceil($this->getSubtotal() * ($this->serviceRate / 100)); }
-    public function getTaxAmount() { return ceil(($this->getSubtotal() + $this->getServiceCharge()) * ($this->taxRate / 100)); }
-    public function getGrandTotal() { return $this->getSubtotal() + $this->getServiceCharge() + $this->getTaxAmount(); }
+
+    public function getDiscountAmount()
+    {
+        $subtotal = $this->getSubtotal();
+        $bestDiscount = 0;
+        $bestPromoName = null;
+
+        $promos = Promo::where('is_active', true)
+            ->where('min_purchase', '<=', $subtotal)
+            ->get();
+
+        foreach ($promos as $promo) {
+            $currentDiscount = ($promo->type == 'percentage') ? $subtotal * ($promo->value / 100) : $promo->value;
+            if ($currentDiscount > $bestDiscount) {
+                $bestDiscount = $currentDiscount;
+                $bestPromoName = $promo->name;
+            }
+        }
+
+        $this->discountAmount = $bestDiscount;
+        $this->appliedPromoName = $bestPromoName;
+        return $bestDiscount;
+    }
+
+    public function getServiceCharge() { 
+        $base = $this->getSubtotal() - $this->getDiscountAmount();
+        return ceil(max(0, $base) * ($this->serviceRate / 100)); 
+    }
+
+    public function getTaxAmount() { 
+        $base = ($this->getSubtotal() - $this->discountAmount) + $this->getServiceCharge();
+        return ceil(max(0, $base) * ($this->taxRate / 100)); 
+    }
+
+    public function getGrandTotal() { 
+        return max(0, $this->getSubtotal() - $this->discountAmount) + $this->getServiceCharge() + $this->getTaxAmount(); 
+    }
 
     public function openCheckout() { if (!empty($this->cart)) $this->isCheckoutOpen = true; }
     public function closeCheckout() { $this->isCheckoutOpen = false; }
@@ -268,6 +303,8 @@ class OrderPage extends Component
                     'customer_name' => $this->customerName,
                     'note' => $this->orderNote . ($this->memberPhone ? " (Member: {$this->memberPhone})" : ""),
                     'subtotal' => $this->getSubtotal(),
+                    'discount_amount' => $this->discountAmount,
+                    'promo_name' => $this->appliedPromoName,
                     'service_charge' => $this->getServiceCharge(),
                     'tax_amount' => $this->getTaxAmount(),
                     'total_price' => $this->getGrandTotal(),

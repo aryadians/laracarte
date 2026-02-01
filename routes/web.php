@@ -14,8 +14,10 @@ use App\Livewire\Admin\Reports;
 use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\IngredientManager;
 use App\Livewire\Admin\Expo;
+use App\Livewire\Admin\PromoManager;
 use App\Livewire\Front\OrderIndex;
 use App\Livewire\Front\OrderPage;
+use App\Livewire\Front\Kiosk;
 use App\Livewire\Admin\PrintReceipt;
 use App\Livewire\Admin\Settings;
 
@@ -32,10 +34,6 @@ Route::post('/webhook/midtrans', [MidtransWebhookController::class, 'handle']);
 Route::get('/', function () {
     return redirect()->route('login');
 });
-
-use App\Livewire\Front\Kiosk;
-
-// ...
 
 // Customer Routes (Scan QR)
 Route::get('/order/{slug}', OrderIndex::class)->name('order.index');
@@ -67,6 +65,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/products', ProductManager::class)->name('products');
         Route::get('/ingredients', IngredientManager::class)->name('ingredients');
+        Route::get('/promos', PromoManager::class)->name('promos');
         Route::get('/kitchen', OrderManager::class)->name('kitchen');
         Route::get('/expo', Expo::class)->name('expo');
         Route::get('/tables', TableManager::class)->name('tables');

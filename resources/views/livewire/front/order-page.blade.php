@@ -259,6 +259,12 @@
                             <span>Subtotal</span>
                             <span>Rp {{ number_format($this->getSubtotal(), 0, ',', '.') }}</span>
                         </div>
+                        @if($discountAmount > 0)
+                        <div class="flex justify-between items-center text-xs text-emerald-600 font-black">
+                            <span>Promo: {{ $appliedPromoName }}</span>
+                            <span>- Rp {{ number_format($discountAmount, 0, ',', '.') }}</span>
+                        </div>
+                        @endif
                         <div class="flex justify-between items-center text-xs text-slate-500">
                             <span>Service Charge ({{ $serviceRate }}%)</span>
                             <span>Rp {{ number_format($this->getServiceCharge(), 0, ',', '.') }}</span>
