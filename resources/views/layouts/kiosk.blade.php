@@ -12,7 +12,7 @@
 
     <style>
         [x-cloak] { display: none !important; }
-        body { background-color: #f8fafc; overflow: hidden; touch-action: manipulation; }
+        body { background-color: #f8fafc; touch-action: manipulation; }
         .kiosk-container { height: 100vh; display: flex; flex-direction: column; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

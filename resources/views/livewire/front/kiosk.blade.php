@@ -38,33 +38,37 @@
         </header>
 
         <main class="flex-1 overflow-y-auto p-10 custom-scrollbar">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                @foreach($products as $product)
-                <div wire:key="prod-{{ $product->id }}" 
-                    wire:click="addToCart({{ $product->id }})"
-                    class="bg-white rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-slate-100 group cursor-pointer active:scale-95">
-                    
-                    <div class="aspect-square relative overflow-hidden bg-slate-100">
-                        @if($product->image)
-                            <img src="{{ asset('storage/' . $product->image) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                        @else
-                            <div class="w-full h-full flex items-center justify-center text-slate-300">
-                                <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            </div>
-                        @endif
+            @if($products->isEmpty())
+                <div class="p-10 text-center text-xl font-bold text-gray-400">TIDAK ADA PRODUK DITEMUKAN</div>
+            @else
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    @foreach($products as $product)
+                    <div wire:key="prod-{{ $product->id }}" 
+                        wire:click="addToCart({{ $product->id }})"
+                        class="bg-white rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-slate-100 group cursor-pointer active:scale-95">
                         
-                        @if($product->variants->isNotEmpty())
-                            <div class="absolute top-4 right-4 bg-indigo-600 text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-lg uppercase tracking-widest">Opsi Tersedia</div>
-                        @endif
-                    </div>
+                        <div class="aspect-square relative overflow-hidden bg-slate-100">
+                            @if($product->image)
+                                <img src="{{ asset('storage/' . $product->image) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center text-slate-300">
+                                    <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                </div>
+                            @endif
+                            
+                            @if($product->variants->isNotEmpty())
+                                <div class="absolute top-4 right-4 bg-indigo-600 text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-lg uppercase tracking-widest">Opsi Tersedia</div>
+                            @endif
+                        </div>
 
-                    <div class="p-6 text-center">
-                        <h3 class="font-black text-slate-800 text-lg leading-tight mb-1">{{ $product->name }}</h3>
-                        <p class="text-indigo-600 font-black text-xl">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                        <div class="p-6 text-center">
+                            <h3 class="font-black text-slate-800 text-lg leading-tight mb-1">{{ $product->name }}</h3>
+                            <p class="text-indigo-600 font-black text-xl">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                        </div>
                     </div>
+                    @endforeach
                 </div>
-                @endforeach
-            </div>
+            @endif
         </main>
     </div>
 
