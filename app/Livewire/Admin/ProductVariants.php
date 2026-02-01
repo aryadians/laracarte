@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\ProductVariantOption;
+use App\Models\Ingredient;
 
 class ProductVariants extends Component
 {
@@ -21,6 +22,12 @@ class ProductVariants extends Component
     public $newOptionName;
     public $newOptionPrice = 0;
 
+    // Form Resep Baru
+    public $selectedIngredientId;
+    public $neededQuantity;
+
+    public $activeTab = 'variants'; // variants | recipe
+
     public function mount($productId)
     {
         $this->product = Product::findOrFail($productId);
@@ -29,7 +36,9 @@ class ProductVariants extends Component
     public function render()
     {
         return view('livewire.admin.product-variants', [
-            'variants' => $this->product->variants()->with('options')->get()
+            'variants' => $this->product->variants()->with('options')->get(),
+            'allIngredients' => Ingredient::orderBy('name')->get(),
+            'recipe' => $this->product->ingredients()->get()
         ]);
     }
 
@@ -84,5 +93,27 @@ class ProductVariants extends Component
     {
         ProductVariantOption::find($id)->delete();
         session()->flash('message', 'Opsi dihapus.');
+    }
+
+    // --- CRUD RECIPE (INGREDIENTS) ---
+    public function addIngredient()
+    {
+        $this->validate([
+            'selectedIngredientId' => 'required',
+            'neededQuantity' => 'required|numeric|min:0.01'
+        ]);
+
+        $this->product->ingredients()->syncWithoutDetaching([
+            $this->selectedIngredientId => ['quantity' => $this->neededQuantity]
+        ]);
+
+        $this->reset(['selectedIngredientId', 'neededQuantity']);
+        session()->flash('message', 'Bahan ditambahkan ke resep.');
+    }
+
+    public function removeIngredient($id)
+    {
+        $this->product->ingredients()->detach($id);
+        session()->flash('message', 'Bahan dihapus dari resep.');
     }
 }

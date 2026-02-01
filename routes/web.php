@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\MidtransWebhookController;
 use App\Livewire\Admin\ProductManager;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\OrderManager;
@@ -11,6 +12,7 @@ use App\Livewire\Admin\TableManager;
 use App\Livewire\Admin\Cashier;
 use App\Livewire\Admin\Reports;
 use App\Livewire\Admin\Dashboard;
+use App\Livewire\Admin\IngredientManager;
 use App\Livewire\Front\OrderIndex;
 use App\Livewire\Front\OrderPage;
 use App\Livewire\Admin\PrintReceipt;
@@ -21,10 +23,6 @@ use App\Livewire\Admin\Settings;
 | Web Routes
 |--------------------------------------------------------------------------
 */
-
-use App\Http\Controllers\MidtransWebhookController;
-
-// ...
 
 // Webhook Midtrans (Public)
 Route::post('/webhook/midtrans', [MidtransWebhookController::class, 'handle']);
@@ -62,6 +60,7 @@ Route::middleware('auth')->group(function () {
     // Admin Panel Group
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/products', ProductManager::class)->name('products');
+        Route::get('/ingredients', IngredientManager::class)->name('ingredients');
         Route::get('/kitchen', OrderManager::class)->name('kitchen');
         Route::get('/tables', TableManager::class)->name('tables');
         Route::get('/cashier', Cashier::class)->name('cashier');

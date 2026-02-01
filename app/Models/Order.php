@@ -34,27 +34,28 @@ class Order extends Model
      */
     public function reduceStock()
     {
-        // 1. Cek flag 'stock_reduced' di database agar stok tidak terpotong 2 kali
         if ($this->stock_reduced) {
             return;
         }
 
-        // 2. Gunakan DB Transaction (Agar data konsisten, semua terpotong atau batal semua jika error)
         DB::transaction(function () {
-            // Loop semua item dalam pesanan ini
             foreach ($this->items as $item) {
                 $product = $item->product;
 
-                // Jika produk ditemukan
                 if ($product) {
-                    // Kurangi stok produk sesuai jumlah pesanan
-                    // (decrement otomatis menangani pengurangan angka di database)
+                    // 1. Kurangi Stok Produk Jadi (Existing)
                     $product->decrement('stock', $item->quantity);
+
+                    // 2. Kurangi Stok Bahan Baku (New)
+                    // Ambil relasi ingredients dari produk
+                    foreach ($product->ingredients as $ingredient) {
+                        // total kebutuhan = qty pesanan x qty per resep
+                        $neededQty = $item->quantity * $ingredient->pivot->quantity;
+                        $ingredient->decrement('stock', $neededQty);
+                    }
                 }
             }
 
-            // 3. Tandai order ini bahwa stoknya SUDAH dipotong
-            // update() ini akan mengubah kolom 'stock_reduced' jadi 1 (true)
             $this->update(['stock_reduced' => true]);
         });
     }
