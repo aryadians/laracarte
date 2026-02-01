@@ -153,9 +153,9 @@
                             <h3 class="font-black text-xl text-slate-800">LUNAS</h3>
                             <p class="text-slate-500 text-sm mb-6">Transaksi Selesai</p>
                             
-                            <button onclick="printReceipt()" class="w-full bg-slate-800 text-white py-3 rounded-xl font-bold hover:bg-slate-900 flex items-center justify-center gap-2 shadow-lg">
+                            <button onclick="window.open('{{ route('admin.print', $selectedOrder->id) }}', '_blank', 'width=400,height=600');" class="w-full bg-slate-800 text-white py-3 rounded-xl font-bold hover:bg-slate-900 flex items-center justify-center gap-2 shadow-lg">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                                Cetak Struk
+                                Cetak Struk (Thermal)
                             </button>
                         </div>
                     @else
@@ -247,102 +247,4 @@
     </div>
     @endif
 
-    @if($selectedOrder) 
-    <div id="receipt-area" class="hidden">
-        <div class="receipt-content">
-            <div class="text-center">
-                <h2 class="font-bold text-xl uppercase">LaraCarte Resto</h2>
-                <p class="text-[10px] leading-tight mt-1">Jl. Teknologi No. 1, Jakarta</p>
-                <p class="text-[10px]">Telp: 0812-3456-7890</p>
-            </div>
-            
-            <div class="dashed-line my-2"></div>
-
-            <div class="text-[10px] space-y-0.5">
-                <div class="flex justify-between"><span>No. Order</span><span class="font-bold">#{{ $selectedOrder->id }}</span></div>
-                <div class="flex justify-between"><span>Tgl</span><span>{{ $selectedOrder->created_at->setTimezone('Asia/Jakarta')->format('d/m/Y H:i') }}</span></div>
-                <div class="flex justify-between"><span>Meja</span><span>{{ $selectedOrder->table->name ?? 'Takeaway' }}</span></div>
-                <div class="flex justify-between"><span>Kasir</span><span>{{ Auth::user()->name ?? 'Admin' }}</span></div>
-            </div>
-
-            <div class="dashed-line my-2"></div>
-
-            <div class="text-[10px]">
-                @foreach($selectedOrder->items as $item)
-                <div class="mb-1">
-                    <div class="font-bold">{{ $item->product->name }}</div>
-                    <div class="flex justify-between pl-2">
-                        <span>{{ $item->quantity }} x {{ number_format($item->price, 0, ',', '.') }}</span>
-                        <span>{{ number_format($item->price * $item->quantity, 0, ',', '.') }}</span>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-
-            <div class="dashed-line my-2"></div>
-
-            <div class="text-[10px] space-y-0.5 text-right">
-                <div class="flex justify-between"><span>Subtotal</span><span>{{ number_format($subtotal, 0, ',', '.') }}</span></div>
-                <div class="flex justify-between"><span>Service (5%)</span><span>{{ number_format($service, 0, ',', '.') }}</span></div>
-                <div class="flex justify-between"><span>PB1 (11%)</span><span>{{ number_format($tax, 0, ',', '.') }}</span></div>
-            </div>
-
-            <div class="dashed-line my-2"></div>
-
-            <div class="text-xs font-bold space-y-1">
-                <div class="flex justify-between text-sm">
-                    <span>TOTAL</span>
-                    <span>Rp {{ number_format($grandTotal, 0, ',', '.') }}</span>
-                </div>
-                <div class="flex justify-between font-normal text-[10px]">
-                    <span>Metode</span>
-                    <span>{{ $selectedOrder->payment_method == 'qris' ? 'QRIS' : 'Tunai' }}</span>
-                </div>
-                
-                @if($selectedOrder->payment_method != 'qris')
-                <div class="flex justify-between font-normal text-[10px]">
-                    <span>Tunai</span>
-                    <span>{{ number_format((int)$paymentAmount, 0, ',', '.') }}</span>
-                </div>
-                <div class="flex justify-between font-normal text-[10px]">
-                    <span>Kembali</span>
-                    <span>{{ number_format((int)$changeAmount, 0, ',', '.') }}</span>
-                </div>
-                @endif
-            </div>
-
-            <div class="dashed-line my-4"></div>
-            <div class="text-center text-[10px]">
-                <p class="font-bold">TERIMA KASIH</p>
-                <p>Harga sudah termasuk PPN</p>
-                <p class="mt-1">Wifi: LaraCarte_Free</p>
-            </div>
-        </div>
-    </div>
-    @endif
-
-    <script>
-        function printReceipt() {
-            var content = document.getElementById('receipt-area').innerHTML;
-            
-            // Buat Iframe
-            var iframe = document.createElement('iframe');
-            iframe.style.position = 'fixed';
-            iframe.style.right = '0';
-            iframe.style.bottom = '0';
-            iframe.style.width = '0';
-            iframe.style.height = '0';
-            iframe.style.border = '0';
-            document.body.appendChild(iframe);
-            
-            // Isi Konten Iframe & Print
-            var doc = iframe.contentWindow.document;
-            doc.open();
-            doc.write('<html><head><style>body{font-family:monospace;width:58mm;font-size:10pt;margin:0;padding:5px;}.dashed-line{border-top:1px dashed #000;width:100%;margin:5px 0;}.text-center{text-align:center}.flex{display:flex;justify-content:space-between}.font-bold{font-weight:bold}.text-right{text-align:right}.mb-1{margin-bottom:2px}.space-y-0.5 > * + * {margin-top: 2px;} .space-y-1 > * + * {margin-top: 4px;}</style></head><body onload="window.print();window.close();">' + content + '</body></html>');
-            doc.close();
-            
-            // Hapus Iframe setelah 1 detik
-            setTimeout(function() { document.body.removeChild(iframe); }, 1000);
-        }
-    </script>
 </div>
