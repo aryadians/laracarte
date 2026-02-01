@@ -8,54 +8,57 @@ use App\Models\Table;
 use App\Models\WaitressCall; // Pastikan Model ini di-import
 use Carbon\Carbon;
 
+use App\Models\Product; // Import Model Product
+use App\Models\OrderItem;
+use Illuminate\Support\Facades\DB;
+
 class Dashboard extends Component
 {
-    /**
-     * Fungsi untuk menandai bahwa panggilan pelayan sudah selesai/didatangi.
-     * Dipanggil saat tombol "Sudah Didatangi" diklik di dashboard.
-     */
-    public function markAsSolved($callId)
-    {
-        $call = WaitressCall::find($callId);
-        if ($call) {
-            $call->update(['status' => 'solved']);
-        }
-    }
+    // ...
 
     public function render()
     {
-        // 1. Hitung Pendapatan Hari Ini (Hanya yang status 'paid')
+        // 1. Pendapatan Hari Ini
         $todayRevenue = Order::where('status', 'paid')
             ->whereDate('created_at', Carbon::today())
             ->sum('total_price');
 
-        // 2. Hitung Total Pesanan Hari Ini
-        $todayOrders = Order::whereDate('created_at', Carbon::today())
-            ->count();
+        // 2. Pesanan Aktif (Dapur)
+        $activeOrders = Order::whereIn('status', ['pending', 'cooking'])->count();
 
-        // 3. Hitung Pesanan Aktif (Status belum 'paid' atau 'completed')
-        // Ini merepresentasikan meja yang sedang makan/menunggu
-        $activeOrders = Order::whereNotIn('status', ['paid', 'completed'])->count();
+        // 3. Stok Menipis (Alert)
+        $lowStockProducts = Product::whereColumn('stock', '<=', 'min_stock')->count();
 
-        // 4. Ambil 5 Pesanan Terbaru untuk Tabel
-        $recentOrders = Order::with('table')
-            ->latest()
-            ->take(5)
-            ->get();
+        // 4. Produk Terlaris Hari Ini
+        $topProduct = OrderItem::select('product_id', DB::raw('SUM(quantity) as total_qty'))
+            ->whereHas('order', function($q) {
+                $q->whereDate('created_at', Carbon::today())
+                  ->where('status', 'paid');
+            })
+            ->groupBy('product_id')
+            ->orderByDesc('total_qty')
+            ->with('product')
+            ->first();
 
-        // 5. FITUR BARU: Ambil Panggilan Waitress yang statusnya 'pending'
-        // Data ini akan memicu alert merah dan suara notifikasi di view
+        // 5. Panggilan Pelayan
         $waitressCalls = WaitressCall::with('table')
             ->where('status', 'pending')
             ->latest()
             ->get();
 
+        // 6. Recent Orders
+        $recentOrders = Order::with('table')
+            ->latest()
+            ->take(5)
+            ->get();
+
         return view('livewire.admin.dashboard', [
             'todayRevenue' => $todayRevenue,
-            'todayOrders' => $todayOrders,
             'activeOrders' => $activeOrders,
+            'lowStockCount' => $lowStockProducts,
+            'topProduct' => $topProduct,
+            'waitressCalls' => $waitressCalls,
             'recentOrders' => $recentOrders,
-            'waitressCalls' => $waitressCalls, // Kirim data panggilan ke view
         ])->layout('components.admin-layout', ['header' => 'Dashboard']);
     }
 }
