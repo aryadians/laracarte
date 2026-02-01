@@ -14,6 +14,7 @@ use App\Livewire\Admin\Dashboard;
 use App\Livewire\Front\OrderIndex;
 use App\Livewire\Front\OrderPage;
 use App\Livewire\Admin\PrintReceipt;
+use App\Livewire\Admin\Settings;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +61,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/history', OrderHistory::class)->name('history');
         Route::get('/transactions', TransactionHistory::class)->name('transactions');
         Route::get('/reports', Reports::class)->name('reports');
+        Route::get('/settings', Settings::class)->name('settings');
         
         // Route untuk Print Struk
         Route::get('/print/{orderId}', PrintReceipt::class)->name('print');
