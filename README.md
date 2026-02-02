@@ -1,9 +1,10 @@
 <div align="center">
 
-  <img src="public/favicon.svg" alt="LaraCarte Logo" width="100" height="100">
+  <img src="public/favicon.svg" alt="LaraCarte Logo" width="120" height="120">
 
   # LaraCarte
-  ### Ultimate SaaS Restaurant Management & POS Ecosystem
+  ### The Ultimate SaaS Restaurant & POS Ecosystem
+  *Transforming Traditional Dining into a Digital Symphony*
 
   <p align="center">
     <a href="https://laravel.com">
@@ -28,86 +29,136 @@
   </p>
 
   <p align="center">
-    <strong>Solusi SaaS Terpadu: Kelola Ribuan Restoran dalam Satu Platform Modern.</strong>
+    <strong>Sistem Manajemen Restoran SaaS yang Terintegrasi Penuh. Satu Platform, Ribuan Bisnis, Tanpa Batas.</strong>
   </p>
 
 </div>
 
 ---
 
-## 🚀 Arsitektur SaaS (Multi-Tenancy)
+## 🛠️ Arsitektur Sistem (The SaaS Core)
 
-LaraCarte kini mendukung model bisnis **SaaS (Software as a Service)** dengan arsitektur *Single Database Multi-Tenancy*:
-*   **Data Isolation:** Setiap restoran (tenant) memiliki ruang data yang terisolasi secara otomatis menggunakan Tenant Scoping.
-*   **Independent Settings:** Setiap merchant dapat mengatur logo, alamat, pajak, dan branding mereka sendiri.
-*   **Custom Domain/Slug:** Akses menu pelanggan melalui URL unik per restoran (misal: `/order/resto-bunda`).
+LaraCarte dibangun dengan pondasi **Multi-Tenancy (Single Database)** yang memungkinkan skalabilitas tinggi bagi penyedia platform SaaS.
 
-## 👑 Modul Super Admin (Platform Control)
+*   **Tenant Scoping:** Isolasi data tingkat tinggi. Restoran A tidak akan pernah bisa melihat data Restoran B.
+*   **Dynamic Resolution:** Identifikasi tenant secara otomatis melalui URL slug (e.g., `laracarte.com/table/waroeng-sedap`).
+*   **Global vs Local Settings:** Konfigurasi platform pusat oleh Super Admin vs Konfigurasi branding operasional oleh Owner.
 
-Dashboard eksklusif untuk pengelola platform untuk memantau seluruh ekosistem:
-*   **Global statistics:** Pantau total tenant, total transaksi, dan pendapatan global real-time.
-*   **Tenant Management:** Aktivasi, suspensi, dan monitoring performa setiap restoran.
-*   **Impersonation Logic:** Login sebagai 'Owner' tenant manapun untuk memberikan bantuan teknis langsung.
-*   **Platform Settings:** Kelola nama aplikasi global, email support, dan maintenance mode.
+---
 
-## 🌟 Fitur Unggulan Merchant
+## 👑 1. Modul Super Admin (Platform Governance)
 
-### 🎁 Loyalty & Point System
-*   **Smart Membership:** Pelanggan cukup masukkan nomor WA saat checkout untuk menjadi member.
-*   **Point Earn & Redemption:** Atur rasio poin per transaksi dan izinkan pelanggan menukarkan poin sebagai diskon langsung.
-*   **Transaction History:** Lacak setiap penambahan dan pemakaian poin pelanggan secara detail.
+Pusat kendali bagi pemilik platform untuk mengelola ekosistem LaraCarte secara keseluruhan.
 
-### 📱 Pengalaman Pelanggan & POS
-*   **Self-Order & Kiosk:** Pesan mandiri via QR Code meja atau tablet kiosk.
-*   **Real-time Kitchen (KDS):** Sinkronisasi instan antara pesanan pelanggan dan monitor dapur.
-*   **Inventory Automation:** Stok bahan baku (Recipe-based) terpotong otomatis saat menu terjual.
+- **Global Dashboard:** Visualisasi data agregat (Pendapatan Global, Pertumbuhan Tenant, Order harian seluruh platform).
+- **Tenant Management:** Daftar lengkap merchant dengan fitur filtrasi, aktivasi, dan blokir.
+- **Support Impersonation:** Fitur "Masuk sebagai Owner" untuk membantu troubleshooting tenant tanpa meminta password.
+- **Financial Platform Reports:** Grafik performa keuangan antar restoran untuk melihat siapa top performer.
+- **Platform Branding:** Pengaturan Nama App, Support Email, dan Toggle Maintenance Mode global.
 
-### 👥 Team Management (RBAC)
-*   **Owner:** Akses penuh laporan, keuangan, dan pengaturan menu.
-*   **Cashier:** Fokus pada verifikasi pembayaran dan cetak struk.
-*   **Kitchen:** Tampilan khusus koki untuk memproses antrian pesanan.
-*   **Waiter:** Manajemen meja dan layanan pelanggan.
+---
+
+## 🏢 2. Modul Owner / Merchant (Business Intelligence)
+
+Didesain khusus untuk pemilik restoran agar bisa mengelola bisnis dengan presisi tinggi.
+
+- **Smart Dashboard:** Metrik real-time (Revenue hari ini, Stok Menipis, Panggilan Meja Aktif).
+- **Master Data Management:** Pengaturan menu, kategori (Food, Drink, Dessert), dan Manajemen Meja (Dynamic QR).
+- **Employee Management:** Tambah dan kelola staf (Kasir, Dapur, Pelayan) dengan sistem RBAC (Role-Based Access Control).
+- **Branding & Operational Settings:** Upload logo, alamat, pengaturan pajak (Tax), dan service charge.
+- **Reporting Suite:** Laporan penjualan harian, bulanan, top products, hingga ekspor data ke Excel/PDF.
+
+---
+
+## 📱 3. Customer Experience (Order mandiri)
+
+Memberikan pengalaman modern bagi pelanggan melalui HP mereka sendiri atau Tablet Kiosk.
+
+- **QR-Code Self Order:** Scan meja -> Lihat menu -> Pilih variant (Level pedas, extra keju) -> Checkout.
+- **Kiosk Mode:** Tampilan antarmuka khusus untuk tablet pesanan mandiri di depan outlet.
+- **Loyalty Program Integration:** Cukup masukkan nomor WA untuk mendaftar member dan mengumpulkan poin otomatis.
+- **Real-time Order Status:** Pantau status pesanan (Pending -> Cooking -> Served) langsung dari browser pelanggan.
+
+---
+
+## 🎁 4. Program Loyalitas & Member (Retention Engine)
+
+Sistem cerdas untuk meningkatkan *customer lifetime value*.
+
+- **Dynamic Points Logic:** Owner mengatur berapa Rupiah untuk mendapatkan 1 poin.
+- **Point Redemption:** Pelanggan dapat menggunakan poin mereka sebagai diskon langsung saat checkout.
+- **Member Directory:** Daftar pelanggan dengan histori transaksi lengkap mereka.
+- **Automatic Registration:** Mengubah pelanggan biasa menjadi member hanya dalam satu klik saat pemesanan.
+
+---
+
+## 👨‍🍳 5. Dapur (KDS) & Operasional (Live Execution)
+
+Memastikan operasional berjalan mulus dengan sinkronisasi real-time via **Laravel Reverb**.
+
+- **Kitchen Display System (KDS):** Antrian pesanan digital yang masuk instan setelah pembayaran terverifikasi.
+- **Waitress Call System:** Tombol visual "Panggil Pelayan" di dashboard admin dengan alert suara.
+- **Expo / Runner Panel:** Verifikasi pesanan yang selesai dimasak untuk segera diantar ke meja.
+- **Low Stock Inventory Alert:** Notifikasi otomatis jika bahan baku resep sudah hampir mencapai titik kritis.
+
+---
+
+## 💳 6. POS & Pembayaran (Seamless Payment)
+
+- **Midtrans Integrated:** Pembayaran non-tunai via QRIS, Virtual Account, Credit Card dengan verifikasi status otomatis.
+- **Cashier POS Interface:** Antarmuka kasir cepat untuk input pesanan manual atau verifikasi pembayaran tunai.
+- **Raw Thermal Printing:** Simulasi cetak struk (Receipt) yang presisi untuk printer thermal 58mm/80mm.
+- **Promotion Engine:** Diskon otomatis berbasis syarat minimum belanja.
+
+---
+
+## 🥦 7. Inventory & Cost Control (The Backend Logic)
+
+- **Recipe System:** Hubungkan menu dengan berbagai bahan baku (misal: Nasi Goreng butuh Nasi, Telur, Kecap).
+- **Real-time Stock Deduction:** Stok bahan baku terpotong otomatis setiap kali menu terkait dipesan.
+- **Stock Movements:** Log detail setiap kali ada pemakaian atau pengadaan bahan baku.
 
 ---
 
 ## 🛠️ Instalasi & Pengembangan
 
-### 1. Setup Awal
+### 1. Prasyarat
+- PHP 8.2+ (Recommended PHP 8.4)
+- Composer & Node.js (Latest LTS)
+- MySQL 8.0+
+- Printer Thermal (Opsional untuk testing struk)
+
+### 2. Setup Cepat
 ```bash
-# Install dependencies
+# Clone & Install
+git clone https://github.com/aryadians/laracarte.git
 composer install && npm install
 
-# Environment setup
+# Config
 cp .env.example .env
 php artisan key:generate
 
-# Database Migration with Seeders
+# Database & Seed (Default data admin)
 php artisan migrate --seed
+php artisan storage:link
 ```
 
-### 2. Membuat Super Admin
-Gunakan command khusus untuk inisialisasi admin platform pertama kali:
+### 3. Inisialisasi Admin Platform
+Jalankan perintah ini untuk membuat akun akses tertinggi:
 ```bash
 php artisan app:create-super-admin
 ```
 
-### 3. Real-time Service
-Wajib menjalankan Reverb untuk fitur notifikasi dan KDS:
-```bash
-php artisan reverb:start
-```
-
 ---
 
-## 📘 Teknologi Utama
-*   **Backend:** Laravel 12 (PHP 8.2+)
-*   **Frontend:** Livewire 3 & Alpine.js
-*   **Styling:** Tailwind CSS
-*   **Real-time:** Laravel Reverb
-*   **Payment:** Midtrans API
+## 🚀 Menjalankan Project
+Buka 3 terminal berbeda untuk performa maksimal:
+1. `php artisan serve` (Web Server)
+2. `npm run dev` (Vite / Styles)
+3. `php artisan reverb:start` (Real-time Engine)
 
 ---
 
 <div align="center">
-  <p>Dibuat dengan ❤️ untuk Masa Depan Digitalisasi Kuliner.</p>
+  <p>💡 <b>LaraCarte</b> - Menghadirkan teknologi restoran masa depan untuk semua ukuran bisnis.</p>
 </div>

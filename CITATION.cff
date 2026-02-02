@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "LaraCarte"
+  given-names: "Contributors"
+title: "LaraCarte - The Ultimate SaaS Restaurant & POS Ecosystem"
+version: 1.0.0
+date-released: 2026-02-02
+url: "https://github.com/aryadians/laracarte"
