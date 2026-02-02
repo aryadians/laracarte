@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\MidtransWebhookController;
 use App\Livewire\Admin\ProductManager;
 use Illuminate\Support\Facades\Route;
+use Livewire\Volt\Volt;
 use App\Livewire\Admin\OrderManager;
 use App\Livewire\Admin\OrderHistory;
 use App\Livewire\Admin\TransactionHistory;
@@ -57,6 +58,15 @@ Route::middleware('auth')->group(function () {
 
     // Manual Logout (Safety)
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+    // Employee Management Routes
+    Volt::route('employees', 'admin.employees.index')
+        ->middleware(['role:owner']) // Enforce Owner Role
+        ->name('employees.index');
+
+    Volt::route('employees/create', 'admin.employees.create')
+        ->middleware(['role:owner']) // Enforce Owner Role
+        ->name('employees.create');
 
     // Admin Panel Group
     Route::prefix('admin')->name('admin.')->group(function () {

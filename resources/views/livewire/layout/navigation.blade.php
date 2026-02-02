@@ -27,6 +27,12 @@ $logout = function (Logout $logout) {
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </x-nav-link>
+            
+                    @if(auth()->user()->hasRole(\App\Enums\UserRole::OWNER))
+                        <x-nav-link :href="route('employees.index')" :active="request()->routeIs('employees.*')" wire:navigate>
+                            {{ __('Manage Employees') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -91,6 +97,12 @@ $logout = function (Logout $logout) {
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            @if(auth()->user()->hasRole(\App\Enums\UserRole::OWNER))
+                <x-responsive-nav-link :href="route('employees.index')" :active="request()->routeIs('employees.*')" wire:navigate>
+                    {{ __('Manage Employees') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

@@ -17,6 +17,19 @@ class User extends Authenticatable
         return $this->belongsTo(Tenant::class);
     }
 
+    public function hasRole(string|\App\Enums\UserRole $role): bool
+    {
+        if ($role instanceof \App\Enums\UserRole) {
+            $role = $role->value;
+        }
+        
+        if ($this->role instanceof \App\Enums\UserRole) {
+             return $this->role->value === $role;
+        }
+
+        return $this->role === $role;
+    }
+
     /**
      * The attributes that are mass assignable.
      *
@@ -50,6 +63,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => \App\Enums\UserRole::class,
         ];
     }
 }

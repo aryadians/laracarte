@@ -45,7 +45,7 @@ $register = function () {
         'name' => $validated['name'],
         'email' => $validated['email'],
         'password' => $validated['password'],
-        'role' => 'admin', // First user is admin
+        'role' => 'owner', // First user is owner
         'tenant_id' => $tenant->id,
     ]);
 
