@@ -35,7 +35,7 @@
         <div class="absolute bottom-0 left-0 w-64 h-64 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 -ml-16 -mb-16 animate-blob animation-delay-2000"></div>
         <div class="relative z-10">
             <h2 class="text-3xl font-black text-white mb-2">Halo, {{ auth()->user()->name }}! 👋</h2>
-            <p class="text-slate-400 text-lg">Pantau performa {{ auth()->user()->tenant->name }} secara real-time di sini.</p>
+            <p class="text-slate-400 text-lg">Pantau performa {{ auth()->user()->tenant?->name ?? 'Platform' }} secara real-time di sini.</p>
         </div>
     </div>
 

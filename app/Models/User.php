@@ -19,15 +19,10 @@ class User extends Authenticatable
 
     public function hasRole(string|\App\Enums\UserRole $role): bool
     {
-        if ($role instanceof \App\Enums\UserRole) {
-            $role = $role->value;
-        }
-        
-        if ($this->role instanceof \App\Enums\UserRole) {
-             return $this->role->value === $role;
-        }
+        $targetRole = $role instanceof \App\Enums\UserRole ? $role->value : $role;
+        $currentRole = $this->role instanceof \App\Enums\UserRole ? $this->role->value : $this->role;
 
-        return $this->role === $role;
+        return $currentRole === $targetRole;
     }
 
     /**

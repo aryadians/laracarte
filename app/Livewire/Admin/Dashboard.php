@@ -14,7 +14,13 @@ use Illuminate\Support\Facades\DB;
 
 class Dashboard extends Component
 {
-    // ...
+    public function mount()
+    {
+        // Redirect Super Admin to their actual dashboard unless they are impersonating
+        if (auth()->user()->hasRole(\App\Enums\UserRole::SUPER_ADMIN) && !session()->has('impersonator_id')) {
+            return $this->redirectRoute('super-admin.dashboard', navigate: true);
+        }
+    }
 
     public function render()
     {

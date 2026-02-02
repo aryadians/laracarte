@@ -20,6 +20,7 @@ use App\Livewire\Front\OrderPage;
 use App\Livewire\Front\Kiosk;
 use App\Livewire\Admin\PrintReceipt;
 use App\Livewire\Admin\Settings;
+use App\Livewire\Admin\Loyalty;
 
 /*
 |--------------------------------------------------------------------------
@@ -90,6 +91,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/reports', Reports::class)->name('reports');
             Route::get('/transactions', TransactionHistory::class)->name('transactions'); // Laporan Harian
             Route::get('/settings', Settings::class)->name('settings');
+            Route::get('/loyalty', Loyalty::class)->name('loyalty');
         });
 
         // Kitchen Routes (Kitchen & Owner)

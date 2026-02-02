@@ -19,9 +19,15 @@ class EnsureUserHasRole
             return redirect()->route('login');
         }
 
-        foreach ($roles as $role) {
-            if ($request->user()->hasRole($role)) {
-                return $next($request);
+        foreach ($roles as $roleGroup) {
+            // Split by comma in case it's passed as 'role:kitchen,owner'
+            $individualRoles = explode(',', $roleGroup);
+            
+            foreach ($individualRoles as $role) {
+                $trimmedRole = trim($role);
+                if ($request->user()->hasRole($trimmedRole)) {
+                    return $next($request);
+                }
             }
         }
 
