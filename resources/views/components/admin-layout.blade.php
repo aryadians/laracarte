@@ -45,16 +45,22 @@
 
         <div class="h-24 flex items-center px-8 border-b border-slate-800/50 bg-[#0B1120] shrink-0">
             <div class="flex items-center gap-3.5">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 ring-1 ring-white/10">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M6 13.87A8 8 0 0 1 12 10a8 8 0 0 1 6 3.88"></path>
-                        <path d="M2 14h20"></path>
-                        <path d="M12 10v-3"></path>
-                        <path d="M12 4a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z"></path>
-                    </svg>
-                </div>
+                @if(auth()->user()->tenant && auth()->user()->tenant->logo)
+                    <img src="{{ asset('storage/' . auth()->user()->tenant->logo) }}" class="w-10 h-10 rounded-xl object-cover ring-1 ring-white/10 shadow-lg shadow-indigo-500/20">
+                @else
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 ring-1 ring-white/10">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 13.87A8 8 0 0 1 12 10a8 8 0 0 1 6 3.88"></path>
+                            <path d="M2 14h20"></path>
+                            <path d="M12 10v-3"></path>
+                            <path d="M12 4a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z"></path>
+                        </svg>
+                    </div>
+                @endif
                 <div>
-                    <h1 class="text-xl font-black tracking-tight text-white leading-none">Lara<span class="text-indigo-400">Carte.</span></h1>
+                    <h1 class="text-xl font-black tracking-tight text-white leading-none truncate max-w-[140px]">
+                        {{ auth()->user()->tenant->name ?? 'LaraCarte' }}
+                    </h1>
                     <p class="text-[10px] font-bold text-slate-500 tracking-[0.2em] uppercase mt-1.5">Resto Manager</p>
                 </div>
             </div>

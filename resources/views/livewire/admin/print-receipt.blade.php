@@ -1,6 +1,9 @@
 <div>
     {{-- Header Toko --}}
     <div class="text-center mb-4">
+        @if($logo)
+            <img src="{{ asset('storage/' . $logo) }}" style="width: 50px; height: auto; margin: 0 auto 5px; filter: grayscale(100%);" alt="Logo">
+        @endif
         <h1 class="font-bold uppercase" style="font-size: 16px;">{{ $storeName }}</h1>
         <p style="font-size: 10px;">{{ $storeAddress }}</p>
     </div>
