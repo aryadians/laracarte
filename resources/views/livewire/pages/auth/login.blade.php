@@ -17,7 +17,7 @@ $login = function () {
 
     Session::regenerate();
 
-    $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+    $this->redirectIntended(default: route('dashboard', absolute: false));
 };
 
 ?>
@@ -165,7 +165,7 @@ $login = function () {
 
             <div class="mt-8 text-center border-t border-slate-100 pt-6">
                 <p class="text-slate-500 text-xs font-medium mb-3">Ingin membuka restoran baru?</p>
-                <a href="{{ route('register') }}" wire:navigate
+                <a href="{{ route('register') }}" 
                     class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-50 text-indigo-600 text-xs font-bold hover:bg-indigo-100 hover:text-indigo-700 transition-colors">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\MidtransWebhookController;
 use App\Livewire\Admin\ProductManager;
@@ -54,9 +53,7 @@ Route::middleware('auth')->group(function () {
         ->name('dashboard');
 
     // Profile Management
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::view('/profile', 'profile')->name('profile');
 
     // Manual Logout (Safety)
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
