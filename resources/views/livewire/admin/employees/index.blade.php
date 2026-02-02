@@ -5,7 +5,7 @@ use Livewire\Volt\Component;
 use Livewire\Attributes\Layout;
 use App\Enums\UserRole;
 
-new #[Layout('layouts.app')] class extends Component
+new #[Layout('components.admin-layout')] class extends Component
 {
     public function with(): array
     {
@@ -32,75 +32,97 @@ new #[Layout('layouts.app')] class extends Component
     }
 }; ?>
 
-<div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">Employees</h2>
-            <a href="{{ route('employees.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                + Add Employee
-            </a>
+<div class="p-6">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        <div>
+            <h1 class="text-3xl font-black text-slate-800 tracking-tight">Manajemen Karyawan 👥</h1>
+            <p class="text-slate-500 mt-1 text-lg">Kelola staf restoran Anda, atur peran dan akses mereka.</p>
         </div>
+        
+        <a href="{{ route('employees.create') }}" class="group relative px-6 py-3 font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5 transition-all duration-300">
+            <span class="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:rotate-90 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Tambah Karyawan
+            </span>
+        </a>
+    </div>
 
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            <div class="p-6 text-gray-900">
-                
-                @if($employees->isEmpty())
-                    <div class="text-center py-10 text-gray-500">
-                        No employees found. Click "Add Employee" to create one.
-                    </div>
-                @else
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
-                                    <th scope="col" class="relative px-6 py-3">
-                                        <span class="sr-only">Actions</span>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                @foreach($employees as $employee)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="h-10 w-10 flex-shrink-0">
-                                                <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-lg">
-                                                    {{ substr($employee->name, 0, 1) }}
-                                                </div>
-                                            </div>
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">{{ $employee->name }}</div>
-                                                <div class="text-sm text-gray-500">{{ $employee->email }}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                            {{ $employee->hasRole(UserRole::CASHIER) ? 'bg-green-100 text-green-800' : '' }}
-                                            {{ $employee->hasRole(UserRole::KITCHEN) ? 'bg-orange-100 text-orange-800' : '' }}
-                                            {{ $employee->hasRole(UserRole::WAITER) ? 'bg-blue-100 text-blue-800' : '' }}">
-                                            {{ $employee->role->label() }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ $employee->created_at->format('M d, Y') }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <button wire:click="delete({{ $employee->id }})" 
-                                            wire:confirm="Are you sure you want to delete this employee?"
-                                            class="text-red-600 hover:text-red-900 ml-4">Delete</button>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
+    @if (session()->has('message'))
+        <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-r-xl shadow-sm flex items-center justify-between animate-fade-in-down">
+            <div class="flex items-center">
+                <svg class="w-6 h-6 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <div>
+                    <p class="font-bold text-green-800">Berhasil!</p>
+                    <p class="text-sm text-green-700">{{ session('message') }}</p>
+                </div>
             </div>
+            <button onclick="this.parentElement.remove()" class="text-green-500 hover:text-green-700">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+    @endif
+
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-600">
+                <thead class="bg-slate-50 text-slate-500 font-bold uppercase text-xs">
+                    <tr>
+                        <th scope="col" class="px-6 py-4">Nama Lengkap</th>
+                        <th scope="col" class="px-6 py-4">Peran (Role)</th>
+                        <th scope="col" class="px-6 py-4">Bergabung</th>
+                        <th scope="col" class="px-6 py-4 text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    @forelse($employees as $employee)
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="h-10 w-10 flex-shrink-0">
+                                    <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-lg ring-2 ring-white shadow-sm">
+                                        {{ substr($employee->name, 0, 1) }}
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-bold text-slate-900">{{ $employee->name }}</div>
+                                    <div class="text-xs text-slate-500">{{ $employee->email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full 
+                                {{ $employee->hasRole(UserRole::CASHIER) ? 'bg-green-100 text-green-700' : '' }}
+                                {{ $employee->hasRole(UserRole::KITCHEN) ? 'bg-orange-100 text-orange-700' : '' }}
+                                {{ $employee->hasRole(UserRole::WAITER) ? 'bg-blue-100 text-blue-700' : '' }}">
+                                {{ $employee->role->label() }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 font-medium">
+                            {{ $employee->created_at->format('d M Y') }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                            <button wire:click="delete({{ $employee->id }})" 
+                                wire:confirm="Apakah Anda yakin ingin menghapus karyawan ini? Akses mereka akan dicabut permanen."
+                                class="text-red-500 hover:text-red-700 font-bold text-xs bg-red-50 px-4 py-2 rounded-lg hover:bg-red-100 transition duration-200">
+                                Hapus Akses
+                            </button>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="4" class="px-6 py-12 text-center text-slate-400">
+                            <div class="flex flex-col items-center justify-center">
+                                <svg class="w-12 h-12 text-slate-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                <span class="font-medium">Belum ada karyawan.</span>
+                                <span class="text-xs mt-1">Tambahkan karyawan baru untuk membantu operasional restoran Anda.</span>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
