@@ -69,20 +69,37 @@ Route::middleware('auth')->group(function () {
         ->name('employees.create');
 
     // Admin Panel Group
+    // Admin Panel Group (RBAC)
     Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('/products', ProductManager::class)->name('products');
-        Route::get('/ingredients', IngredientManager::class)->name('ingredients');
-        Route::get('/promos', PromoManager::class)->name('promos');
-        Route::get('/kitchen', OrderManager::class)->name('kitchen');
-        Route::get('/expo', Expo::class)->name('expo');
-        Route::get('/tables', TableManager::class)->name('tables');
-        Route::get('/cashier', Cashier::class)->name('cashier');
-        Route::get('/history', OrderHistory::class)->name('history');
-        Route::get('/transactions', TransactionHistory::class)->name('transactions');
-        Route::get('/reports', Reports::class)->name('reports');
-        Route::get('/settings', Settings::class)->name('settings');
         
-        // Route untuk Print Struk
-        Route::get('/print/{orderId}', PrintReceipt::class)->name('print');
+        // Owner ONLY Routes (Master Data, Reports, Settings)
+        Route::middleware(['role:owner'])->group(function () {
+            Route::get('/products', ProductManager::class)->name('products');
+            Route::get('/ingredients', IngredientManager::class)->name('ingredients');
+            Route::get('/promos', PromoManager::class)->name('promos');
+            Route::get('/reports', Reports::class)->name('reports');
+            Route::get('/transactions', TransactionHistory::class)->name('transactions'); // Laporan Harian
+            Route::get('/settings', Settings::class)->name('settings');
+        });
+
+        // Kitchen Routes (Kitchen & Owner)
+        Route::middleware(['role:kitchen,owner'])->group(function () {
+            Route::get('/kitchen', OrderManager::class)->name('kitchen');
+            Route::get('/expo', Expo::class)->name('expo'); // Expo/Runner can be Kitchen too
+        });
+
+        // Cashier Routes (Cashier & Owner)
+        Route::middleware(['role:cashier,owner'])->group(function () {
+            Route::get('/cashier', Cashier::class)->name('cashier');
+            Route::get('/history', OrderHistory::class)->name('history'); // Riwayat Transaksi
+            
+            // Route untuk Print Struk
+            Route::get('/print/{orderId}', PrintReceipt::class)->name('print');
+        });
+
+        // Table Management (Owner, Cashier, Waiter)
+        Route::middleware(['role:owner,cashier,waiter'])->group(function () {
+            Route::get('/tables', TableManager::class)->name('tables');
+        });
     });
 });

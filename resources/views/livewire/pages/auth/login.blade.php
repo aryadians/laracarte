@@ -17,7 +17,18 @@ $login = function () {
 
     Session::regenerate();
 
-    $this->redirectIntended(default: route('dashboard', absolute: false));
+    $user = auth()->user();
+    $redirect = route('dashboard', absolute: false);
+
+    if ($user->hasRole(\App\Enums\UserRole::CASHIER)) {
+        $redirect = route('admin.cashier', absolute: false);
+    } elseif ($user->hasRole(\App\Enums\UserRole::KITCHEN)) {
+        $redirect = route('admin.kitchen', absolute: false);
+    } elseif ($user->hasRole(\App\Enums\UserRole::WAITER)) {
+        $redirect = route('admin.tables', absolute: false);
+    }
+
+    $this->redirectIntended(default: $redirect);
 };
 
 ?>
