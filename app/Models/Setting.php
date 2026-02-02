@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Setting extends Model
 {
+    use \App\Traits\BelongsToTenant;
     use HasFactory;
 
     protected $fillable = ['key', 'value', 'description'];

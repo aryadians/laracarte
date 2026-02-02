@@ -23,6 +23,7 @@ class RegistrationTest extends TestCase
     {
         $component = Volt::test('pages.auth.register')
             ->set('name', 'Test User')
+            ->set('store_name', 'My Awesome Café') // NEW
             ->set('email', 'test@example.com')
             ->set('password', 'password')
             ->set('password_confirmation', 'password');
@@ -32,5 +33,12 @@ class RegistrationTest extends TestCase
         $component->assertRedirect(route('dashboard', absolute: false));
 
         $this->assertAuthenticated();
+
+        $this->assertDatabaseHas('tenants', [
+            'name' => 'My Awesome Café',
+        ]);
+
+        $user = \App\Models\User::where('email', 'test@example.com')->first();
+        $this->assertNotNull($user->tenant_id);
     }
 }

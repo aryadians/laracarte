@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB; // Wajib ada untuk fitur stok
 
 class Order extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Traits\BelongsToTenant;
 
     protected $guarded = [];
 
@@ -58,24 +58,25 @@ class Order extends Model
 
             $this->update(['stock_reduced' => true]);
         });
-    }    public function getWhatsappUrlAttribute()
+    }
+    public function getWhatsappUrlAttribute()
     {
         $storeName = \App\Models\Setting::value('store_name', 'LaraCarte Resto');
         $date = $this->created_at->format('d M Y H:i');
-        
+
         $message = "*STRUK DIGITAL - {$storeName}*\n";
         $message .= "--------------------------------\n";
         $message .= "Order ID: #{$this->id}\n";
         $message .= "Tgl: {$date}\n";
         $message .= "Meja: " . ($this->table->name ?? 'Takeaway') . "\n";
         $message .= "--------------------------------\n";
-        
+
         foreach ($this->items as $item) {
             $message .= "{$item->quantity}x {$item->product->name} (" . number_format($item->price, 0, ',', '.') . ")\n";
             // Jika ada varian (opsional, jika ingin detail)
             // $message .= "   + Varian...\n";
         }
-        
+
         $message .= "--------------------------------\n";
         $message .= "Total: Rp " . number_format($this->total_price, 0, ',', '.') . "\n";
         $message .= "Status: " . strtoupper($this->payment_method) . " ({$this->status})\n";

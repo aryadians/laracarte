@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
+    use \App\Traits\BelongsToTenant;
+
     protected $fillable = [
         'name',
         'description',
@@ -29,6 +31,6 @@ class Product extends Model
     public function ingredients()
     {
         return $this->belongsToMany(Ingredient::class, 'product_ingredients')
-                    ->withPivot('quantity');
+            ->withPivot('quantity');
     }
 }
