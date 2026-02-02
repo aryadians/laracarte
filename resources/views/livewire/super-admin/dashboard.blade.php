@@ -85,7 +85,7 @@
                 <p class="text-indigo-200 text-sm mb-8 max-w-xs">Kelola semua tenant dan monitoring aktivitas sistem dalam satu panel kendali.</p>
                 
                 <div class="space-y-4">
-                    <button class="w-full py-4 bg-white/10 hover:bg-white/20 rounded-2xl text-left px-6 border border-white/10 transition-all group flex items-center justify-between">
+                    <a wire:navigate href="{{ route('super-admin.tenants') }}" class="w-full py-4 bg-white/10 hover:bg-white/20 rounded-2xl text-left px-6 border border-white/10 transition-all group flex items-center justify-between">
                         <div class="flex items-center gap-4">
                             <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
@@ -93,9 +93,9 @@
                             <span class="font-bold">Manajemen Restoran</span>
                         </div>
                         <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                    </button>
+                    </a>
                     
-                    <button class="w-full py-4 bg-white/10 hover:bg-white/20 rounded-2xl text-left px-6 border border-white/10 transition-all group flex items-center justify-between">
+                    <a href="#" class="w-full py-4 bg-white/10 hover:bg-white/20 rounded-2xl text-left px-6 border border-white/10 transition-all group flex items-center justify-between opacity-50 cursor-not-allowed">
                         <div class="flex items-center gap-4">
                             <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -103,7 +103,7 @@
                             <span class="font-bold">Pengaturan Platform</span>
                         </div>
                         <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                    </button>
+                    </a>
                 </div>
             </div>
 

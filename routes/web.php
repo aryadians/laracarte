@@ -73,6 +73,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['role:super_admin'])->prefix('super-admin')->name('super-admin.')->group(function () {
         Route::get('/dashboard', \App\Livewire\SuperAdmin\Dashboard::class)->name('dashboard');
         Route::get('/tenants', \App\Livewire\SuperAdmin\Tenants::class)->name('tenants');
+        Route::get('/settings', \App\Livewire\SuperAdmin\Settings::class)->name('settings');
+        Route::get('/financials', \App\Livewire\SuperAdmin\Financials::class)->name('financials');
     });
 
     Route::post('/impersonate/leave', [\App\Http\Controllers\ImpersonationController::class, 'leave'])->name('impersonate.leave');
