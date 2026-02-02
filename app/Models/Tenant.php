@@ -15,6 +15,7 @@ class Tenant extends Model
         'address',
         'phone',
         'logo',
+        'is_active',
     ];
 
     // Relationships can be defined here if needed, e.g. users, products, etc.

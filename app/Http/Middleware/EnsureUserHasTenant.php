@@ -17,6 +17,11 @@ class EnsureUserHasTenant
     public function handle(Request $request, Closure $next): Response
     {
         if (Auth::check() && !Auth::user()->tenant_id) {
+            // Super Admin don't need a tenant_id
+            if (Auth::user()->hasRole(\App\Enums\UserRole::SUPER_ADMIN)) {
+                return $next($request);
+            }
+            
             Auth::logout();
             return redirect()->route('login')->with('status', 'Your account is not associated with any restaurant.');
         }

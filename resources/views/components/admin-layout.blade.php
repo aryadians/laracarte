@@ -41,11 +41,20 @@
 
 <body class="font-sans antialiased bg-slate-50 text-slate-800">
 
+@php
+    $isSuperAdmin = auth()->user()->hasRole(\App\Enums\UserRole::SUPER_ADMIN);
+@endphp
     <aside class="fixed top-0 left-0 z-50 w-72 h-screen bg-[#0B1120] text-white border-r border-slate-800/50 flex flex-col transition-transform duration-300 transform -translate-x-full sm:translate-x-0 shadow-2xl">
 
         <div class="h-24 flex items-center px-8 border-b border-slate-800/50 bg-[#0B1120] shrink-0">
             <div class="flex items-center gap-3.5">
-                @if(auth()->user()->tenant && auth()->user()->tenant->logo)
+                @if($isSuperAdmin)
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-orange-600 flex items-center justify-center shadow-lg shadow-rose-500/20 ring-1 ring-white/10">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                        </svg>
+                    </div>
+                @elseif(auth()->user()->tenant && auth()->user()->tenant->logo)
                     <img src="{{ asset('storage/' . auth()->user()->tenant->logo) }}" class="w-10 h-10 rounded-xl object-cover ring-1 ring-white/10 shadow-lg shadow-indigo-500/20">
                 @else
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 ring-1 ring-white/10">
@@ -59,31 +68,64 @@
                 @endif
                 <div>
                     <h1 class="text-xl font-black tracking-tight text-white leading-none truncate max-w-[140px]">
-                        {{ auth()->user()->tenant->name ?? 'LaraCarte' }}
+                        @if($isSuperAdmin)
+                            Platform Admin
+                        @else
+                            {{ auth()->user()->tenant->name ?? 'LaraCarte' }}
+                        @endif
                     </h1>
-                    <p class="text-[10px] font-bold text-slate-500 tracking-[0.2em] uppercase mt-1.5">Resto Manager</p>
+                    <p class="text-[10px] font-bold text-slate-500 tracking-[0.2em] uppercase mt-1.5">{{ $isSuperAdmin ? 'Central Command' : 'Resto Manager' }}</p>
                 </div>
             </div>
         </div>
 
         <nav class="flex-1 overflow-y-auto py-8 px-5 space-y-10 custom-scrollbar">
 
-            <div class="space-y-2">
-                <a wire:navigate href="{{ route('dashboard') }}" class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl transition-all duration-200 group {{ request()->routeIs('dashboard') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
-                    <svg class="w-5 h-5 {{ request()->routeIs('dashboard') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
-                    </svg>
-                    <span class="font-bold text-sm tracking-wide">Dashboard</span>
-                </a>
-                @if(auth()->user()->hasRole(\App\Enums\UserRole::OWNER))
-                <a wire:navigate href="{{ route('admin.reports') }}" class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl transition-all duration-200 group {{ request()->routeIs('admin.reports') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
-                    <svg class="w-5 h-5 {{ request()->routeIs('admin.reports') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                    </svg>
-                    <span class="font-bold text-sm tracking-wide">Laporan Analitik</span>
-                </a>
+            @if($isSuperAdmin)
+                {{-- Super Admin Navigation --}}
+                <div class="space-y-2">
+                    <a wire:navigate href="{{ route('super-admin.dashboard') }}" class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl transition-all duration-200 group {{ request()->routeIs('super-admin.dashboard') ? 'bg-rose-600 text-white shadow-lg shadow-rose-500/25 ring-1 ring-rose-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
+                        <svg class="w-5 h-5 {{ request()->routeIs('super-admin.dashboard') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                        </svg>
+                        <span class="font-bold text-sm tracking-wide">Pusat Statistik</span>
+                    </a>
+                </div>
+
+                <div>
+                    <p class="px-4 text-[10px] font-extrabold text-slate-600 uppercase tracking-widest mb-4">Platform Control</p>
+                    <div class="space-y-2">
+                        <a wire:navigate href="{{ route('super-admin.tenants') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 group {{ request()->routeIs('super-admin.tenants') ? 'bg-rose-600 text-white shadow-lg shadow-rose-500/25 ring-1 ring-rose-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
+                            <svg class="w-5 h-5 {{ request()->routeIs('super-admin.tenants') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                            <span class="font-bold text-sm">Manajemen Restoran</span>
+                        </a>
+                        <a href="#" class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 group text-slate-400 hover:bg-slate-800/50 hover:text-white opacity-50 cursor-not-allowed">
+                            <svg class="w-5 h-5 text-slate-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span class="font-bold text-sm">Keuangan Platform</span>
+                        </a>
+                    </div>
+                </div>
+            @else
+                <div class="space-y-2">
+                    <a wire:navigate href="{{ route('dashboard') }}" class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl transition-all duration-200 group {{ request()->routeIs('dashboard') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
+                        <svg class="w-5 h-5 {{ request()->routeIs('dashboard') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                        </svg>
+                        <span class="font-bold text-sm tracking-wide">Dashboard</span>
+                    </a>
+                    @if(auth()->user()->hasRole(\App\Enums\UserRole::OWNER))
+                    <a wire:navigate href="{{ route('admin.reports') }}" class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl transition-all duration-200 group {{ request()->routeIs('admin.reports') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white' }}">
+                        <svg class="w-5 h-5 {{ request()->routeIs('admin.reports') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        <span class="font-bold text-sm tracking-wide">Laporan Analitik</span>
+                    </a>
                 @endif
-            </div>
+                </div>
 
             <div>
                 <p class="px-4 text-[10px] font-extrabold text-slate-600 uppercase tracking-widest mb-4">Master Data</p>
@@ -179,7 +221,7 @@
                     @endif
                 </div>
             </div>
-
+            @endif
         </nav>
 
         <div class="p-5 border-t border-slate-800/50 bg-[#0F1623] shrink-0">
@@ -192,7 +234,20 @@
                 </div>
                 <div class="overflow-hidden">
                     <h4 class="text-sm font-bold text-white truncate">{{ Auth::user()->name ?? 'Administrator' }}</h4>
-                    <p class="text-[11px] font-semibold text-slate-500 truncate uppercase tracking-wide">{{ Auth::user()->role->label() ?? 'Administrator' }}</p>
+                    <p class="text-[11px] font-semibold text-slate-500 truncate uppercase tracking-wide">
+                        @php
+                            $user = Auth::user();
+                            $roleLabel = 'Administrator';
+                            if ($isSuperAdmin) {
+                                $roleLabel = 'Platform Admin';
+                            } elseif ($user && method_exists($user->role, 'label')) {
+                                $roleLabel = $user->role->label();
+                            } elseif ($user && is_object($user->role)) {
+                                $roleLabel = $user->role->value ?? 'Staff';
+                            }
+                        @endphp
+                        {{ $roleLabel }}
+                    </p>
                 </div>
             </div>
 
@@ -209,6 +264,26 @@
     </aside>
 
     <div class="sm:ml-72 min-h-screen flex flex-col transition-all duration-300">
+
+        @if(session()->has('impersonator_id'))
+            <div class="bg-rose-600 text-white px-8 py-3 flex items-center justify-between shadow-lg relative z-[60]">
+                <div class="flex items-center gap-4">
+                    <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center animate-pulse">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    </div>
+                    <div class="flex flex-col md:flex-row md:items-center gap-1 md:gap-3">
+                        <span class="text-sm font-black tracking-wide uppercase italic">Mode Impersonasi:</span>
+                        <span class="text-sm font-bold opacity-90">Anda masuk sebagai Owner <strong>{{ auth()->user()->name }}</strong></span>
+                    </div>
+                </div>
+                <form action="{{ route('impersonate.leave') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="bg-white text-rose-600 px-5 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider hover:bg-rose-50 transition-all shadow-sm">
+                        Balik ke Super Admin
+                    </button>
+                </form>
+            </div>
+        @endif
 
         <header class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-200/60 flex items-center justify-between px-8 z-40 sticky top-0">
             <h2 class="text-xl font-bold text-slate-800 tracking-tight">

@@ -20,7 +20,9 @@ $login = function () {
     $user = auth()->user();
     $redirect = route('dashboard', absolute: false);
 
-    if ($user->hasRole(\App\Enums\UserRole::CASHIER)) {
+    if ($user->hasRole(\App\Enums\UserRole::SUPER_ADMIN)) {
+        $redirect = route('super-admin.dashboard', absolute: false);
+    } elseif ($user->hasRole(\App\Enums\UserRole::CASHIER)) {
         $redirect = route('admin.cashier', absolute: false);
     } elseif ($user->hasRole(\App\Enums\UserRole::KITCHEN)) {
         $redirect = route('admin.kitchen', absolute: false);

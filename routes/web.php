@@ -69,6 +69,14 @@ Route::middleware('auth')->group(function () {
         ->name('employees.create');
 
     // Admin Panel Group
+    // Super Admin Routes (Platform Management)
+    Route::middleware(['role:super_admin'])->prefix('super-admin')->name('super-admin.')->group(function () {
+        Route::get('/dashboard', \App\Livewire\SuperAdmin\Dashboard::class)->name('dashboard');
+        Route::get('/tenants', \App\Livewire\SuperAdmin\Tenants::class)->name('tenants');
+    });
+
+    Route::post('/impersonate/leave', [\App\Http\Controllers\ImpersonationController::class, 'leave'])->name('impersonate.leave');
+
     // Admin Panel Group (RBAC)
     Route::prefix('admin')->name('admin.')->group(function () {
         
