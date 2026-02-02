@@ -22,6 +22,8 @@ class OrderPage extends Component
 {
     public $table;
     public $table_name;
+    public $taxRate;
+    public $serviceRate;
 
     // UI & Filter State
     public $activeCategory = 'all';
@@ -43,6 +45,10 @@ class OrderPage extends Component
     public $memberPhone = '';
     public $memberPoints = 0;
     public $isMember = false;
+    public $pointsToRedeem = 0;
+    public $pointRedeemValue = 0;
+    public $pointEarnRate = 10000;
+    public $loyaltyEnabled = true;
 
     // Promo
     public $discountAmount = 0;
@@ -56,6 +62,10 @@ class OrderPage extends Component
 
         $this->taxRate = (int) \App\Models\Setting::value('tax_rate', 11);
         $this->serviceRate = (int) \App\Models\Setting::value('service_charge', 5);
+
+        $this->loyaltyEnabled = (bool) \App\Models\Setting::value('loyalty_enabled', 1);
+        $this->pointEarnRate = (int) \App\Models\Setting::value('point_earn_rate', 10000);
+        $this->pointRedeemValue = (int) \App\Models\Setting::value('point_redeem_value', 100);
     }
 
     public function setCategory($id)
@@ -74,7 +84,28 @@ class OrderPage extends Component
             } else {
                 $this->isMember = false;
                 $this->memberPoints = 0;
+                $this->pointsToRedeem = 0;
             }
+        } else {
+            $this->isMember = false;
+            $this->pointsToRedeem = 0;
+        }
+    }
+
+    public function updatedPointsToRedeem()
+    {
+        if ($this->pointsToRedeem > $this->memberPoints) {
+            $this->pointsToRedeem = $this->memberPoints;
+        }
+
+        if ($this->pointsToRedeem < 0) {
+            $this->pointsToRedeem = 0;
+        }
+        
+        // Maksimal diskon poin tidak boleh melebihi subtotal
+        $pointDiscount = $this->pointsToRedeem * $this->pointRedeemValue;
+        if ($pointDiscount > $this->getSubtotal()) {
+            $this->pointsToRedeem = floor($this->getSubtotal() / $this->pointRedeemValue);
         }
     }
 
@@ -248,18 +279,24 @@ class OrderPage extends Component
         return $bestDiscount;
     }
 
+    public function getPointDiscount()
+    {
+        return $this->pointsToRedeem * $this->pointRedeemValue;
+    }
+
     public function getServiceCharge() { 
-        $base = $this->getSubtotal() - $this->getDiscountAmount();
+        $base = $this->getSubtotal() - $this->getDiscountAmount() - $this->getPointDiscount();
         return ceil(max(0, $base) * ($this->serviceRate / 100)); 
     }
 
     public function getTaxAmount() { 
-        $base = ($this->getSubtotal() - $this->discountAmount) + $this->getServiceCharge();
+        $base = ($this->getSubtotal() - $this->discountAmount - $this->getPointDiscount()) + $this->getServiceCharge();
         return ceil(max(0, $base) * ($this->taxRate / 100)); 
     }
 
     public function getGrandTotal() { 
-        return max(0, $this->getSubtotal() - $this->discountAmount) + $this->getServiceCharge() + $this->getTaxAmount(); 
+        $total = ($this->getSubtotal() - $this->discountAmount - $this->getPointDiscount()) + $this->getServiceCharge() + $this->getTaxAmount(); 
+        return max(0, $total);
     }
 
     public function openCheckout() { if (!empty($this->cart)) $this->isCheckoutOpen = true; }
@@ -303,8 +340,8 @@ class OrderPage extends Component
                     'customer_name' => $this->customerName,
                     'note' => $this->orderNote . ($this->memberPhone ? " (Member: {$this->memberPhone})" : ""),
                     'subtotal' => $this->getSubtotal(),
-                    'discount_amount' => $this->discountAmount,
-                    'promo_name' => $this->appliedPromoName,
+                    'discount_amount' => $this->discountAmount + $this->getPointDiscount(),
+                    'promo_name' => $this->appliedPromoName . ($this->pointsToRedeem > 0 ? " + Point Redeem" : ""),
                     'service_charge' => $this->getServiceCharge(),
                     'tax_amount' => $this->getTaxAmount(),
                     'total_price' => $this->getGrandTotal(),
@@ -325,11 +362,30 @@ class OrderPage extends Component
                     }
                 }
 
-                // 4. Hitung Poin (Rp 10.000 = 1 Poin)
+                // 4. Hitung Poin & Potong Poin Redeem
                 if ($customerId) {
-                    $pointsEarned = floor($order->total_price / 10000);
+                    // Potong poin jika ada redeem
+                    if ($this->pointsToRedeem > 0) {
+                        PointTransaction::create([
+                            'customer_id' => $customerId,
+                            'order_id' => $order->id,
+                            'type' => 'redeem',
+                            'points' => $this->pointsToRedeem,
+                            'description' => 'Redeem poin untuk Order #' . $order->id
+                        ]);
+                        Customer::where('id', $customerId)->decrement('points_balance', $this->pointsToRedeem);
+                    }
+
+                    // Tambah poin dari belanja (berdasarkan grand total setelah dikurangi poin)
+                    $pointsEarned = floor($order->total_price / $this->pointEarnRate);
                     if ($pointsEarned > 0) {
-                        PointTransaction::create(['customer_id' => $customerId, 'order_id' => $order->id, 'type' => 'earn', 'points' => $pointsEarned, 'description' => 'Reward Order #' . $order->id]);
+                        PointTransaction::create([
+                            'customer_id' => $customerId,
+                            'order_id' => $order->id,
+                            'type' => 'earn',
+                            'points' => $pointsEarned,
+                            'description' => 'Reward Order #' . $order->id
+                        ]);
                         Customer::where('id', $customerId)->increment('points_balance', $pointsEarned);
                     }
                 }
@@ -351,6 +407,7 @@ class OrderPage extends Component
                 $this->customerName = '';
                 $this->orderNote = '';
                 $this->memberPhone = '';
+                $this->pointsToRedeem = 0;
                 session()->flash('success', 'Pesanan berhasil! Poin telah ditambahkan.');
             }
         } catch (\Exception $e) {

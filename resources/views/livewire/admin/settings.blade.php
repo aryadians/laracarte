@@ -120,6 +120,40 @@
                 <p class="text-[10px] text-slate-400 mt-3 italic">*Kosongkan jika hanya ingin menggunakan pembayaran manual di kasir.</p>
             </div>
 
+            {{-- Loyalty Program --}}
+            <div class="pt-8 border-t border-slate-100">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2 mb-6">
+                    <h3 class="font-bold text-slate-700 uppercase text-xs tracking-wider">Program Loyalitas & Member</h3>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" wire:model="loyaltyEnabled" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </label>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 {{ !$loyaltyEnabled ? 'opacity-50 pointer-events-none' : '' }}">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Rasio Poin (Belanja -> 1 Poin)</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <span class="text-slate-500 font-bold text-xs">Rp</span>
+                            </div>
+                            <input wire:model="pointEarnRate" type="number" class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 font-medium text-slate-800 transition-all pl-12">
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-1">Berapa rupiah belanja untuk mendapatkan 1 poin. Contoh: 10000</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Nilai Tukar (1 Poin -> Potongan)</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <span class="text-slate-500 font-bold text-xs">Rp</span>
+                            </div>
+                            <input wire:model="pointRedeemValue" type="number" class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 font-medium text-slate-800 transition-all pl-12">
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-1">Nilai rupiah per 1 poin saat ditukarkan. Contoh: 100</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="pt-6 border-t border-slate-100 flex justify-end">
                 <button type="submit" class="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-500/30 transition-all active:scale-95 flex items-center gap-2">
                     <svg wire:loading.remove class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>

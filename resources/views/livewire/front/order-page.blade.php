@@ -265,6 +265,12 @@
                             <span>- Rp {{ number_format($discountAmount, 0, ',', '.') }}</span>
                         </div>
                         @endif
+                        @if($this->getPointDiscount() > 0)
+                        <div class="flex justify-between items-center text-xs text-orange-600 font-black">
+                            <span>Potongan Poin</span>
+                            <span>- Rp {{ number_format($this->getPointDiscount(), 0, ',', '.') }}</span>
+                        </div>
+                        @endif
                         <div class="flex justify-between items-center text-xs text-slate-500">
                             <span>Service Charge ({{ $serviceRate }}%)</span>
                             <span>Rp {{ number_format($this->getServiceCharge(), 0, ',', '.') }}</span>
@@ -286,10 +292,25 @@
                             <label class="block text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">Punya Member? (Masukkan No. WA)</label>
                             <input wire:model.live="memberPhone" type="number" placeholder="0812xxxx" class="w-full rounded-xl border-slate-200 focus:ring-indigo-500 font-bold text-slate-800 py-2.5 text-sm">
                             @if($isMember)
-                                <p class="text-[10px] text-green-600 font-bold mt-2 flex items-center gap-1">
-                                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                                    Member Terdeteksi: {{ $memberPoints }} Poin
-                                </p>
+                                <div class="mt-3 p-3 bg-white rounded-xl border border-indigo-100">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-[10px] text-slate-500 font-bold uppercase">Saldo Poin</span>
+                                        <span class="text-xs font-black text-indigo-600">{{ $memberPoints }} Poin</span>
+                                    </div>
+                                    
+                                    @if($loyaltyEnabled && $memberPoints > 0)
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex-1">
+                                            <label class="text-[9px] text-slate-400 font-bold block mb-1">Pakai Poin</label>
+                                            <input wire:model.live="pointsToRedeem" type="number" max="{{ $memberPoints }}" min="0" class="w-full rounded-lg border-slate-200 py-1.5 text-xs font-black text-slate-800 focus:ring-orange-500">
+                                        </div>
+                                        <div class="pt-4">
+                                            <span class="text-[10px] font-bold text-orange-600">= -Rp {{ number_format($this->getPointDiscount(), 0, ',', '.') }}</span>
+                                        </div>
+                                    </div>
+                                    <p class="text-[8px] text-slate-400 mt-1 italic">*1 Poin = Rp {{ number_format($pointRedeemValue, 0, ',', '.') }}</p>
+                                    @endif
+                                </div>
                             @elseif(strlen($memberPhone) >= 10)
                                 <p class="text-[10px] text-indigo-500 font-bold mt-2">Nomor baru? Otomatis jadi member & dapat poin!</p>
                             @endif

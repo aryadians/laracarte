@@ -24,6 +24,11 @@ class Settings extends Component
     public $midtransClientKey;
     public $midtransIsProduction;
 
+    // Loyalty Program
+    public $loyaltyEnabled;
+    public $pointEarnRate;
+    public $pointRedeemValue;
+
     protected function rules()
     {
         return [
@@ -37,6 +42,9 @@ class Settings extends Component
             'midtransServerKey' => 'nullable|string',
             'midtransClientKey' => 'nullable|string',
             'midtransIsProduction' => 'required|boolean',
+            'loyaltyEnabled' => 'required|boolean',
+            'pointEarnRate' => 'required|numeric|min:1',
+            'pointRedeemValue' => 'required|numeric|min:1',
         ];
     }
 
@@ -58,6 +66,11 @@ class Settings extends Component
         $this->midtransServerKey = Setting::value('midtrans_server_key', '');
         $this->midtransClientKey = Setting::value('midtrans_client_key', '');
         $this->midtransIsProduction = (bool) Setting::value('midtrans_is_production', 0);
+
+        // Loyalty Settings
+        $this->loyaltyEnabled = (bool) Setting::value('loyalty_enabled', 1);
+        $this->pointEarnRate = Setting::value('point_earn_rate', 10000);
+        $this->pointRedeemValue = Setting::value('point_redeem_value', 100);
     }
 
     public function updateSettings()
@@ -88,6 +101,10 @@ class Settings extends Component
         Setting::updateOrCreate(['key' => 'midtrans_server_key'], ['value' => $this->midtransServerKey]);
         Setting::updateOrCreate(['key' => 'midtrans_client_key'], ['value' => $this->midtransClientKey]);
         Setting::updateOrCreate(['key' => 'midtrans_is_production'], ['value' => $this->midtransIsProduction]);
+
+        Setting::updateOrCreate(['key' => 'loyalty_enabled'], ['value' => $this->loyaltyEnabled]);
+        Setting::updateOrCreate(['key' => 'point_earn_rate'], ['value' => $this->pointEarnRate]);
+        Setting::updateOrCreate(['key' => 'point_redeem_value'], ['value' => $this->pointRedeemValue]);
 
         session()->flash('message', 'Pengaturan branding & toko berhasil disimpan!');
     }
