@@ -24,7 +24,7 @@ class EmployeeManagementTest extends TestCase
         $response = $this->get(route('dashboard'));
         
         // We expect to see "Karyawan" or similar in the dashboard navigation
-        $response->assertSee('Manage Employees'); 
+        $response->assertSee('Manajemen Karyawan'); 
     }
 
     public function test_owner_can_create_new_employee(): void
@@ -43,6 +43,7 @@ class EmployeeManagementTest extends TestCase
             ->set('email', 'cashier@example.com')
             ->set('role', UserRole::CASHIER->value)
             ->set('password', 'password123')
+            ->set('password_confirmation', 'password123')
             ->call('save');
 
         $component->assertHasNoErrors();

@@ -299,6 +299,20 @@
     </div>
 
     @livewireScripts
+    <script>
+        document.addEventListener('livewire:init', () => {
+            Livewire.hook('request', ({ fail }) => {
+                fail(({ status, preventDefault }) => {
+                    if (status === 419) {
+                        // Jika session expired, refresh halaman otomatis 
+                        // agar redirect ke login tanpa muncul popup error
+                        window.location.reload();
+                        preventDefault();
+                    }
+                });
+            });
+        });
+    </script>
     @stack('scripts')
 </body>
 
