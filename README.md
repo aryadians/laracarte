@@ -3,17 +3,17 @@
   <img src="public/favicon.svg" alt="LaraCarte Logo" width="100" height="100">
 
   # LaraCarte
-  ### Ultimate Restaurant Management & POS Ecosystem
+  ### Ultimate SaaS Restaurant Management & POS Ecosystem
 
   <p align="center">
     <a href="https://laravel.com">
-      <img src="https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel">
+      <img src="https://img.shields.io/badge/Laravel_12-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel">
     </a>
     <a href="https://livewire.laravel.com">
-      <img src="https://img.shields.io/badge/Livewire-4E56A6?style=for-the-badge&logo=livewire&logoColor=white" alt="Livewire">
+      <img src="https://img.shields.io/badge/Livewire_3-4E56A6?style=for-the-badge&logo=livewire&logoColor=white" alt="Livewire">
     </a>
     <a href="https://tailwindcss.com">
-      <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="TailwindCSS">
+      <img src="https://img.shields.io/badge/Tailwind_CSS_3-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="TailwindCSS">
     </a>
     <a href="https://reverb.laravel.com">
       <img src="https://img.shields.io/badge/Real--time-Reverb-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Reverb">
@@ -28,86 +28,83 @@
   </p>
 
   <p align="center">
-    <strong>Solusi Digital Terpadu untuk Restoran: Dari Order Mandiri hingga Kontrol Stok Bahan Baku.</strong>
+    <strong>Solusi SaaS Terpadu: Kelola Ribuan Restoran dalam Satu Platform Modern.</strong>
   </p>
 
 </div>
 
 ---
 
-## 🌟 Fitur Utama (Keseluruhan)
+## 🚀 Arsitektur SaaS (Multi-Tenancy)
 
-LaraCarte adalah sistem manajemen restoran modern yang mengintegrasikan seluruh alur operasional dalam satu platform yang sinkron secara real-time.
+LaraCarte kini mendukung model bisnis **SaaS (Software as a Service)** dengan arsitektur *Single Database Multi-Tenancy*:
+*   **Data Isolation:** Setiap restoran (tenant) memiliki ruang data yang terisolasi secara otomatis menggunakan Tenant Scoping.
+*   **Independent Settings:** Setiap merchant dapat mengatur logo, alamat, pajak, dan branding mereka sendiri.
+*   **Custom Domain/Slug:** Akses menu pelanggan melalui URL unik per restoran (misal: `/order/resto-bunda`).
 
-### 📱 Pengalaman Pelanggan (Self-Order)
-*   **Smart QR Ordering:** Pelanggan pesan langsung dari meja via HP.
-*   **Kiosk Tablet Mode:** Tampilan khusus tablet untuk pesanan mandiri yang lebih mewah.
-*   **Product Variants & Modifiers:** Dukungan menu kompleks (Level pedas, extra topping, dll).
-*   **Loyalty Member System:** Kumpulkan poin otomatis menggunakan nomor WhatsApp.
-*   **Digital Receipt:** Kirim struk belanja langsung ke WhatsApp pelanggan.
+## 👑 Modul Super Admin (Platform Control)
 
-### 💳 Integrasi Pembayaran
-*   **Automated Payment (Midtrans):** Bayar otomatis via QRIS, E-Wallet (GoPay/OVO), VA, dan terverifikasi instan.
-*   **Cashier Payment:** Opsi bayar tunai tradisional di meja kasir.
-*   **Promo & Diskon Otomatis:** Sistem cerdas yang menerapkan diskon terbaik berdasarkan syarat belanja.
+Dashboard eksklusif untuk pengelola platform untuk memantau seluruh ekosistem:
+*   **Global statistics:** Pantau total tenant, total transaksi, dan pendapatan global real-time.
+*   **Tenant Management:** Aktivasi, suspensi, dan monitoring performa setiap restoran.
+*   **Impersonation Logic:** Login sebagai 'Owner' tenant manapun untuk memberikan bantuan teknis langsung.
+*   **Platform Settings:** Kelola nama aplikasi global, email support, dan maintenance mode.
 
-### 👨‍🍳 Operasional Real-Time
-*   **Kitchen Display System (KDS):** Pesanan masuk ke dapur secara instan tanpa delay (WebSocket).
-*   **Expo / Runner Screen:** Memastikan makanan yang sudah jadi segera diantar ke meja oleh pelayan.
-*   **Waitress Call:** Tombol panggil pelayan digital dengan notifikasi suara di dashboard.
+## 🌟 Fitur Unggulan Merchant
 
-### 🥦 Inventory & Cost Control
-*   **Recipe Management:** Satu menu terdiri dari berbagai bahan baku (misal: 200g beras, 1 telur).
-*   **Auto-Deduct Stock:** Stok bahan mentah terpotong otomatis setiap kali menu terjual.
-*   **Low Stock Alerts:** Peringatan dini saat bahan baku hampir habis untuk mencegah gangguan jualan.
+### 🎁 Loyalty & Point System
+*   **Smart Membership:** Pelanggan cukup masukkan nomor WA saat checkout untuk menjadi member.
+*   **Point Earn & Redemption:** Atur rasio poin per transaksi dan izinkan pelanggan menukarkan poin sebagai diskon langsung.
+*   **Transaction History:** Lacak setiap penambahan dan pemakaian poin pelanggan secara detail.
 
-### 💰 Kasir & Keamanan Keuangan
-*   **Cash Shift Management:** Kontrol ketat modal awal dan rekonsiliasi uang fisik di akhir shift.
-*   **Thermal Printing:** Cetak struk langsung (Direct Print) ke printer thermal 58mm/80mm.
-*   **Transaction Audit:** Catatan detail setiap diskon, poin, dan metode bayar yang digunakan.
+### 📱 Pengalaman Pelanggan & POS
+*   **Self-Order & Kiosk:** Pesan mandiri via QR Code meja atau tablet kiosk.
+*   **Real-time Kitchen (KDS):** Sinkronisasi instan antara pesanan pelanggan dan monitor dapur.
+*   **Inventory Automation:** Stok bahan baku (Recipe-based) terpotong otomatis saat menu terjual.
 
-### 📊 Analitik & Laporan
-*   **Interactive Dashboard:** Grafik penjualan, top product, dan statistik real-time.
-*   **Advanced Reports:** Filter penjualan mendalam berdasarkan rentang tanggal.
-*   **Data Export:** Download laporan keuangan dalam format **Excel (.xlsx)** atau **PDF**.
+### 👥 Team Management (RBAC)
+*   **Owner:** Akses penuh laporan, keuangan, dan pengaturan menu.
+*   **Cashier:** Fokus pada verifikasi pembayaran dan cetak struk.
+*   **Kitchen:** Tampilan khusus koki untuk memproses antrian pesanan.
+*   **Waiter:** Manajemen meja dan layanan pelanggan.
 
 ---
 
 ## 🛠️ Instalasi & Pengembangan
 
-### 1. Prasyarat
-*   PHP 8.2+
-*   Composer & Node.js
-*   MySQL 8.0+
-
-### 2. Setup Cepat
+### 1. Setup Awal
 ```bash
-# Clone & Install
-git clone https://github.com/username/laracarte.git
-cd laracarte
+# Install dependencies
 composer install && npm install
 
-# Konfigurasi
+# Environment setup
 cp .env.example .env
 php artisan key:generate
 
-# Database & Storage
+# Database Migration with Seeders
 php artisan migrate --seed
-php artisan storage:link
 ```
 
-### 3. Menjalankan Sistem
-Anda wajib menjalankan **3 layanan** utama agar fitur real-time bekerja:
-1. `php artisan serve` (Aplikasi)
-2. `npm run dev` (Vite Assets)
-3. `php artisan reverb:start` (Real-time Engine)
+### 2. Membuat Super Admin
+Gunakan command khusus untuk inisialisasi admin platform pertama kali:
+```bash
+php artisan app:create-super-admin
+```
+
+### 3. Real-time Service
+Wajib menjalankan Reverb untuk fitur notifikasi dan KDS:
+```bash
+php artisan reverb:start
+```
 
 ---
 
-## 📘 Dokumentasi Operasional
-
-*   **[Manual Pengguna](PANDUAN_PENGGUNA.md)** - Panduan cara pakai untuk Kasir, Koki, dan Pelayan.
-*   **[Panduan Deployment](DEPLOYMENT.md)** - Petunjuk teknis untuk instalasi di server VPS (Nginx, Supervisor, SSL).
+## 📘 Teknologi Utama
+*   **Backend:** Laravel 12 (PHP 8.2+)
+*   **Frontend:** Livewire 3 & Alpine.js
+*   **Styling:** Tailwind CSS
+*   **Real-time:** Laravel Reverb
+*   **Payment:** Midtrans API
 
 ---
 
